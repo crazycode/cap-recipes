@@ -7,27 +7,21 @@ Capistrano::Configuration.instance(true).load do
 			gitosis.install_packages
 			gitosis.setup_packages
 			gitosis.setup_git_user
-			gitosis.set_permissions
 			gitosis.copy_ssh
+			gitosis.set_permissions
 		end
 		
-		desc "update the system"
-		task :update_system do
-			%[update dist-upgrade].each { |cmd| sudo "apt-get #{cmd}"}
-		end
-	
 		desc "install all necessary packages"
 		task :install_packages do
-			gitosis.update_system
-			%[git-core python-setuptools].each { |package| sudo "apt-get install #{package}" }
+			%[git-core python-setuptools].each { |package| sudo "apt-get -qy install #{package}" }
 		end
+		before "gitosis:install_packages", "aptitude:updates"
 
 		desc "setup packages"
 		task :setup_packages do
-			run "mkdir ~/src && cd ~/src"
-			run "git clone git://eagain.net/gitosis.git"
-			run "cd ~/src/gitosis"
-			sudo "python setup.py install"
+			run "mkdir -p ~/src"
+			run "cd ~/src && git clone git://eagain.net/gitosis.git"
+			run "cd ~/src/gitosis && sudo python setup.py install"
 		end
 
 		desc "setup git user"
