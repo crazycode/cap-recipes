@@ -12,7 +12,13 @@ Capistrano::Configuration.instance(true).load do
       enable_apache_module
       update_config
     end
-
+    
+    desc "install build-essentials"
+    task :install_build_essential do
+      utilities.apt_install 'build-essential'
+    end
+    before "passenger:install", "passenger:install_build_essential"
+    
     desc "Setup Passenger Module"
     task :enable_apache_module, :roles => :web do
       sudo "#{base_ruby_path}/bin/gem install passenger --no-ri --no-rdoc"
