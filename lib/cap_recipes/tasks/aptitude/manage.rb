@@ -1,17 +1,17 @@
-require 'cap_recipes/tasks/utilities.rb'
+require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 
 Capistrano::Configuration.instance(true).load do
   namespace :aptitude do
-    desc "Updates all installed packages on apt-get package system"
+    desc "Updates all installed packages on aptitude package system"
     task :updates do
       sudo "apt-get -qy update"
       utilities.apt_upgrade
       sudo "apt-get -qy autoremove"
     end
 
-    desc "Installs a specified apt-get package"
+    desc "Installs a specified aptitude package"
     task :install do
-      deb_pkg_name = ask "What is the name of the package(s) you wish to install?"
+      deb_pkg_name = utilities.ask "Enter name of the package(s) you wish to install:"
       raise "Please specify deb_pkg_name" if deb_pkg_name == ''
       logger.info "Updating packages..."
       sudo "aptitude update"
@@ -19,9 +19,9 @@ Capistrano::Configuration.instance(true).load do
       utilities.apt_install deb_pkg_name
     end
 
-    desc "Removes a specified apt-get package"
+    desc "Removes a specified aptitude package"
     task :remove do
-      deb_pkg_name = ask "What is the name of the package(s) you wish to uninstall?"
+      deb_pkg_name = utilities.ask "Enter name of the package(s) you wish to remove:"
       raise "Please specify deb_pkg_name" if deb_pkg_name == ''
       logger.info "Updating packages..."
       sudo "aptitude update"

@@ -3,28 +3,35 @@ h1. cap-recipes
 A collection of useful capistrano recipes I have been using in production on a number of sites.
 
 This gem is best suited for ruby (and rails) projects which deploy using Apache and Phusion Passenger.
-Feel free to contribute to this collection and make it even better! 
+Worth noting is that the installation tasks are for systems using aptitude package management.
 
-The overall vision for this project being to collect a number of classic, generic recipes which can
-be used by the community.
+The overall vision for this project is simply to collect a number of classic, generic recipes 
+for common issues which can then be used by the community. 
 
-Currently included:
+Feel free to improve upon this recipe collection by adding your own! 
 
- * Apache Server
- * Rubygems Package Management
- * Phusion Passenger (Setup and Deployment)
- * Memcache Process (Setup and Deployment)
+Currently included recipes in this gem:
+
+ * Ruby Setup  
+ * Rubygems Management
+ * Apache Server     
+ * Phusion Passenger
+ * Memcached Management
  * Juggernaut Daemon
  * Backgroundrb Server
  * DelayedJob Worker
  * Whenever Cron Scheduling
- * Aptitude Package Management 
+ * Aptitude Package Management
+ 
+Check out the USAGE section below for specific tasks included in the recipes. 
 
 h2. INSTALLATION
 
-   sudo gem install nesquena-cap-recipes -s http://gems.github.com/
+To install the gem, execute:
 
-Include into your deploy.rb configuration file for Capistrano:
+@$ sudo gem install cap-recipes --source http://gemcutter.org@
+
+Then, include into your @deploy.rb@ configuration file for Capistrano:
 
 <pre>
 <code>
@@ -37,7 +44,7 @@ Include into your deploy.rb configuration file for Capistrano:
   # tasks for managing and tasks for installing):
   require 'cap_recipes/tasks/memcache'
   require 'cap_recipes/tasks/passenger'
-  # or rails, apache, rubygems, delayed_job, juggernaut, backgroundrb, aptitude, whenever
+  # or ruby, rubygems, rails, apache, delayed_job, juggernaut, backgroundrb, aptitude, whenever
 
   # OR
   # only use managing tasks:
@@ -48,6 +55,8 @@ Include into your deploy.rb configuration file for Capistrano:
   require 'cap_recipes/tasks/memcache/install'
 </code>
 </pre>
+
+You can find full examples of what your @deploy.rb@ file should look like in the @examples@ folder.
 
 h2. USAGE
 
@@ -61,35 +70,49 @@ h4. Configuration
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  apache
-    :stop
-    :start
-    :restart
+  * apache:stop - stops the apache server
+  * apache:start - starts the apache server
+  * apache:restart - restarts the apache server
     
-h5. install.rb
+install.rb
 
-  apache
-    :install
+  * apache:install - installs apache and dependencies onto a debian system
+
+h3. Ruby
+
+h4. Configuration
+
+  * None required
   
+h4. Tasks
+
+install.rb
+
+  * ruby:setup - Installs ruby 1.8 using standard aptitude packages
+
 h3. Rubygems
 
 h4. Configuration
 
   * rubygem_paths - a path or array of paths to your gem binaries [default '/usr/bin/gem' ]
+  * rubygems_version - which version of rubygems to install [default '1.3.5']
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  rubygems
-    :full_update
-    :upgrade
-    :update
-    :cleanup
-    :install
-    :uninstall
+  * rubygems:full_update - Upgrades rubygems, updates all installed rubygems and performs a cleanup
+  * rubygems:upgrade - Upgrades rubygems version (if available)
+  * rubygems:update  - Updates all installed rubygems
+  * rubygems:cleanup - Performs a cleanup for all outdated rubygems
+  * rubygems:install - Installs a specifed gem from name inputted on console
+  * rubygems:uninstall - Removes a specified rubygem from name inputted on console
+  
+install.rb
+
+ * rubygems:install - Installs rubygems by downloading package and running setup.rb
 
 h3. Passenger
 
@@ -101,35 +124,32 @@ h4. Configuration
  * local_ping_path - the localhost path to ping to start passenger [default: "http://localhost"]
 
 The following files and folders are expected to exist:
+
  * "#{base_ruby_path}/lib/ruby"
  * "#{base_ruby_path}/bin/ruby"
  * "#{base_ruby_path}/bin/gem"
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  deploy
-    :start
-    :stop
-    :restart
-    :with_migrations
+  * deploy:start - Starts the apache server (if needed)
+  * deploy:stop  - Stops the apache server (if needed)
+  * deploy:restart - Touches the restart.txt file 
       
-h5. install.rb
+install.rb
 
- passenger
-   :install
+ * passenger:install - Installs the passenger gem, compiles the module silently, and adds the necessary configuration
 
 h3. Aptitude
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  aptitude
-    :install
-    :remove
-    :updates
+  * aptitude:install - Installs a specified aptitude package from name inputted on console
+  * aptitude:remove  - Removes a specified aptitude package from name inputted on console
+  * aptitude:updates - Updates all installed aptitude packages
 
 h3. Rails
 
@@ -137,23 +157,25 @@ These recipes support rails-specific functionality
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  rails
-    :symlink_db_config
-    :repair_permissions
-    :tail - tail production log
-    :ping - ping the server to start it
-    sweep
-      :cache
-      :log
+  * rails:symlink_db_config - Symlinks the database.yml file from shared/config to release path
+  * rails:repair_permissions - Forces the permissions on the rails app to make permission errors a thing of the past
+  * rails:tail - tail production log - Provides a stream tailing the production log
+  * rails:ping - pings the server to start a passenger instance (reduces downtime)
+  * rails:sweep:cache - performs a file cache sweep in production
+  * rails:sweep:log - performs a log sweep in production
       
-h5. hooks.rb
+hooks.rb
 
-  after "deploy:update_code", "rails:symlink_db_config" # copy database.yml file to release path
-  after "deploy:update_code", "rails:sweep:cache" # clear cache after updating code
-  after "deploy:restart"    , "rails:repair_permissions" # fix the permissions to work properly
-  after "deploy:restart"    , "rails:ping" # ping passenger to start the rails instance
+<pre>
+<code>
+after "deploy:update_code", "rails:symlink_db_config" # copy database.yml file to release path
+after "deploy:update_code", "rails:sweep:cache" # clear cache after updating code
+after "deploy:restart"    , "rails:repair_permissions" # fix the permissions to work properly
+after "deploy:restart"    , "rails:ping" # ping passenger to start the rails instance
+</code>
+</pre>
 
 h3. DelayedJob
 
@@ -166,18 +188,21 @@ h4. Configuration
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  delayed_job
-    :stop
-    :start
-    :restart
+  * delayed_job:stop - stops the delayed_job workers
+  * delayed_job:start - starts the delayed_job workers
+  * delayed_job:restart - restarts the delayed_job workers
 
-h5. hooks.rb
+hooks.rb
 
-  after "deploy:start",   "delayed_job:start"
-  after "deploy:stop",    "delayed_job:stop"
-  after "deploy:restart", "delayed_job:restart"
+<pre>
+<code>
+after "deploy:start",   "delayed_job:start"
+after "deploy:stop",    "delayed_job:stop"
+after "deploy:restart", "delayed_job:restart"
+</code>
+</pre>
 
 h3. Backgroundrb
 
@@ -191,20 +216,23 @@ h4. Configuration
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  backgroundrb
-    :stop
-    :start
-    :restart
-    :symlink_config
-    :tail
+  * backgroundrb:stop - stop backgroundrb workers
+  * backgroundrb:start - start backgroundrb workers
+  * backgroundrb:restart - restart backgroundrb workers
+  * backgroundrb:symlink_config - copy backgroundrb.yml from shared/config to release
+  * backgroundrb:tail - tails the backgroundrb log file in production
       
-h5. hooks.rb
+hooks.rb
 
-  after "deploy:update_code"   , "backgroundrb:symlink_config" # copy backgroundrb config to release
-  after "deploy:restart"       , "backgroundrb:restart"     # restart backgroundrb daemon
-  after "backgroundrb:restart" , "backgroundrb:repair_permissions" # restart backgroundrb damon
+<pre>
+<code>
+after "deploy:update_code"   , "backgroundrb:symlink_config" # copy backgroundrb config to release
+after "deploy:restart"       , "backgroundrb:restart"     # restart backgroundrb daemon
+after "backgroundrb:restart" , "backgroundrb:repair_permissions" # restart backgroundrb damon
+</code>
+</pre>
 
 h3. Juggernaut
 
@@ -218,19 +246,22 @@ h4. Configuration
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  juggernaut
-    :start
-    :stop
-    :restart
-    :symlink_config
-    :tail
+  * juggernaut:start - starts the juggernaut push server
+  * juggernaut:stop  - stop the juggernaut push server
+  * juggernaut:restart - restart the juggernaut push server
+  * juggernaut:symlink_config - copy juggernaut.yml from shared/config to release
+  * juggernaut:tail - tails the juggernaut log file in production
 
-h5. hooks.rb
+hooks.rb
 
-  after "deploy:update_code", "juggernaut:symlink_config" # copy juggernaut.yml to release
-  after "deploy:restart"    , "juggernaut:restart"     # restart juggernaut daemon
+<pre>
+<code>
+after "deploy:update_code", "juggernaut:symlink_config" # copy juggernaut.yml to release
+after "deploy:restart"    , "juggernaut:restart"     # restart juggernaut daemon
+</code>
+</pre>
 
 h3. Memcache
 
@@ -246,21 +277,23 @@ h4. Configuration
 
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  memcache
-    :start
-    :stop
-    :restart
+  * memcache:start - starts the memcache daemon
+  * memcache:stop  - stops the memcache daemon
+  * memcache:restart - restarts the memcache daemon
     
-h5. install.rb
+install.rb
 
-  memcache
-    :install
+  * memcache:install - Installs memcache aptitude package and rubygem
     
-h5. hooks
+hooks.rb
 
-  after "deploy:restart", "memcache:restart" # clear cache after updating code
+<pre>
+<code>
+after "deploy:restart", "memcache:restart" # clear cache after updating code
+</code>
+</pre>
 
 h3. Whenever
 
@@ -268,19 +301,22 @@ These recipes are for managing whenever cron job scheduling
 
 h4. Configuration
 
-  * None necessary yet
+  * None required
   
 h4. Tasks
 
-h5. manage.rb
+manage.rb
 
-  whenever
-    :update_crontab
+  * whenever:update_crontab - Performs an update applying the schedule.rb file to your server's cron
 
-h5. hooks
+hooks.rb
 
-  after "deploy:symlink", "whenever:update_crontab"
-  
+<pre>
+<code>
+after "deploy:symlink", "whenever:update_crontab"
+</code>
+</pre>
+
 h2. EXAMPLE
 
 Here is a sample deploy.rb file using cap_recipes:
@@ -330,6 +366,45 @@ require 'cap_recipes/tasks/memcache'
 set :memcache_init_path, "/etc/init.d/memcache" # defaults to "/etc/init.d/memcache"
 </code>
 </pre>
+
+You can find more examples of what your @deploy.rb@ file should look like in the @examples@ folder.
+
+h2. UTILITIES
+
+In addition to the recipes themselves, this gem provides a bunch of useful utility methods
+which make writing your own recipes or extending existing ones much easier by creating reusable
+commands for common subtasks in a recipe.
+
+There are too many to mention all of them directly, but check out @lib/cap_recipes/tasks/utilities.rb@
+to browse all available utility methods. A few are listed below:
+
+ * utilities.config_gsub(file, findPattern, replaceString)
+ ** Replaces the @findPattern@ with @replaceString@ within specified file on server
+ ** # utilities.config_gsub('/etc/example', /\#(option:.*?\n)/im, "\\1")
+ 
+ * utilities.ask(question, default) 
+ ** Asks the user a question on the command-line and returns the response
+ ** utilities.ask('What is your name?', 'John')
+ 
+ * utilities.yes?(question) 
+ ** Asks the user a yes or no question on the command-line and returns boolean result
+ ** utilities.yes?('Proceed with installation?')
+ 
+ * utilities.apt_install(packages)
+ ** Installs all specified aptitude packages silently without user intervention
+ ** utilities.apt_install %w[package1 package2]
+ 
+ * utilities.sudo_upload(local_path, remote_dest, options)
+ ** Uploads a file to a temporary location and then sudo moves it to specified remote destination
+ ** utilities.sudo_upload('/local/path/to/file', '/remote/path/to/destination', :mode => 'u+rwx')
+ 
+ * utilities.with_role(role) { ... }
+ ** Forces tasks in block to execute only within specific role(s)
+ ** This is useful because of certain limitations in the role declaration in capistrano
+ 
+ * utilities.with_credentials(:user => 'jsmith', :password => 'secret') { ... }
+ ** Forces tasks in block to execute using the given user/password credentials
+ ** This is useful because of certain limitations in capistrano
 
 h2. LICENSE:
 

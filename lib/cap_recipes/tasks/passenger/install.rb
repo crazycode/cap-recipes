@@ -1,6 +1,6 @@
-require 'cap_recipes/tasks/utilities.rb'
+require File.expand_path(File.dirname(__FILE__) + '/../utilities')
+require File.expand_path(File.dirname(__FILE__) + '/../apache/manage')
 
-#TODO add something like require that a task named apache:restart exists
 Capistrano::Configuration.instance(true).load do
   set :base_ruby_path, '/usr'
   set :confd_passenger_filename, 'passenger'
@@ -13,12 +13,13 @@ Capistrano::Configuration.instance(true).load do
       update_config
     end
     
-    desc "install build-essentials"
+
+    desc "install build-essentials package"
     task :install_build_essential do
       utilities.apt_install 'build-essential'
     end
     before "passenger:install", "passenger:install_build_essential"
-    
+
     desc "Setup Passenger Module"
     task :enable_apache_module, :roles => :web do
       sudo "#{base_ruby_path}/bin/gem install passenger --no-ri --no-rdoc"

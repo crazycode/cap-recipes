@@ -1,4 +1,14 @@
-# rake version:bump:patch && rake release && rake build && rake install && sudo gem cleanup
+=begin
+Using Jeweler for Gem Packaging...
+
+  * Update the version and release version to github: 
+    $ rake version:bump:patch && rake release && rake gemcutter:release
+    
+  * Build and install the latest version locally:
+    $ rake install
+    
+=end
+
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
@@ -12,9 +22,11 @@ begin
     s.homepage = "http://github.com/nesquena/cap-recipes"
     s.description = "Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
     s.authors = ["Nathan Esquenazi"]
+    s.rubyforge_project = 'cap-recipes'
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
 Rake::RDocTask.new do |rdoc|

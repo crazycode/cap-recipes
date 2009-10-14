@@ -11,33 +11,36 @@ module Utilities
     sudo "mv #{tmp} #{file}"
   end
   
+
+  # utilities.ask('What is your name?', 'John')
   def ask(question, default='')
     question = "\n" + question.join("\n") if question.respond_to?(:uniq)
     answer = Capistrano::CLI.ui.ask(space(question)).strip
     answer.empty? ? default : answer
   end
 
+  # utilities.yes?('Proceed with install?')
   def yes?(question)
     question = "\n" + question.join("\n") if question.respond_to?(:uniq)
     question += ' (y/n)'
     ask(question).downcase.include? 'y'
   end
   
-  def space(str)
-    "\n#{'=' * 80}\n#{str}"
-  end
-  
+  # utilities.apt_install %w[package1 package2]
+  # utilities.apt_install "package1 package2"
   def apt_install(packages)
+    packages = packages.split(/\s+/) if packages.respond_to?(:split)
     packages = Array(packages)
-    apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get" 
+    apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get"
     sudo "#{apt_get} -qyu --force-yes install #{packages.join(" ")}"
   end
   
   def apt_upgrade
-    apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get" 
+    apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get"
     sudo "#{apt_get} -qyu --force-yes upgrade"
   end
   
+  # utilities.sudo_upload('/local/path/to/file', '/remote/path/to/destination', options)
   def sudo_upload(from, to, options={}, &block)
     top.upload from, "/tmp/#{File.basename(to)}", options, &block
     sudo "mv /tmp/#{File.basename(to)} #{to}"
@@ -45,6 +48,7 @@ module Utilities
     sudo "chown #{options[:owner]} #{to}" if options[:owner]
   end
   
+  # utilities.adduser('deploy')
   def adduser(user, options={})
     options[:shell] ||= '/bin/bash' # new accounts on ubuntu 6.06.1 have been getting /bin/sh
     switches = '--disabled-password --gecos ""'
@@ -65,6 +69,7 @@ module Utilities
     end
   end
 
+  # utilities.with_credentials(:user => 'xxxx', :password => 'secret')
   # options = { :user => 'xxxxx', :password => 'xxxxx' }
   def with_credentials(options={}, &block)
     original_username, original_password = user, password
@@ -78,16 +83,17 @@ module Utilities
     end
   end
   
+  def space(str)
+    "\n#{'=' * 80}\n#{str}"
+  end
+  
   ##
   # Run a command and ask for input when input_query is seen.
   # Sends the response back to the server.
   #
   # +input_query+ is a regular expression that defaults to /^Password/.
-  #
   # Can be used where +run+ would otherwise be used.
-  #
   # run_with_input 'ssh-keygen ...', /^Are you sure you want to overwrite\?/
- 
   def run_with_input(shell_command, input_query=/^Password/, response=nil)
     handle_command_with_input(:run, shell_command, input_query, response)
   end
@@ -97,9 +103,7 @@ module Utilities
   # Sends the response back to the server.
   #
   # See also +run_with_input+
-  #
   # +input_query+ is a regular expression
- 
   def sudo_with_input(shell_command, input_query=/^Password/, response=nil)
     handle_command_with_input(:sudo, shell_command, input_query, response)
   end
@@ -116,7 +120,6 @@ module Utilities
   # local_run_method: run or sudo
   # shell_command: The command to run
   # input_query: A regular expression matching a request for input: /^Please enter your password/
- 
   def handle_command_with_input(local_run_method, shell_command, input_query, response=nil)
     send(local_run_method, shell_command, {:pty => true}) do |channel, stream, data|
       
