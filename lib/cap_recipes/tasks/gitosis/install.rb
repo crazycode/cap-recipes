@@ -15,7 +15,7 @@ Capistrano::Configuration.instance(true).load do
 		
 		desc "install all necessary packages"
 		task :install_packages do
-			utilities.apt_install %[git-core python-setuptools]
+			utilities.apt_install %w[git-core python-setuptools]
 		end
 		before "gitosis:install_packages", "aptitude:updates"
 
