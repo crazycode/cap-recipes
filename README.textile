@@ -22,6 +22,7 @@ Currently included recipes in this gem:
  * DelayedJob Worker
  * Whenever Cron Scheduling
  * Aptitude Package Management
+ * Gitosis Git Repository Setup
  
 Check out the USAGE section below for specific tasks included in the recipes. 
 
@@ -316,6 +317,20 @@ hooks.rb
 after "deploy:symlink", "whenever:update_crontab"
 </code>
 </pre>
+
+h3. Gitosis
+
+These recipes are for setuping up a Gitosis Repository
+
+h4. Configuration
+  
+  * None required
+  
+h4. Tasks
+
+install.rb
+
+  * gitosis:install - Performs the full install of Gitosis to your server.
 
 h2. EXAMPLE
 
