@@ -1,9 +1,9 @@
-require 'cap_recipes/tasks/utilities.rb'
+
+require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 
 Capistrano::Configuration.instance(true).load do
-
+  
 	namespace :gitosis do
-
 		desc "install Gitosis"
 		task :install do
 			gitosis.install_packages
@@ -15,7 +15,7 @@ Capistrano::Configuration.instance(true).load do
 		
 		desc "install all necessary packages"
 		task :install_packages do
-			utilities.apt_install %w[git-core python-setuptools]
+			utilities.apt_install %[git-core python-setuptools]
 		end
 		before "gitosis:install_packages", "aptitude:updates"
 
@@ -35,7 +35,6 @@ Capistrano::Configuration.instance(true).load do
 	  task :generate_ssh do
 	    run "rm -f /home/#{user}/.ssh/id_rsa; rm -f /home/#{user}/.ssh/id_rsa.pub"
 	    run "ssh-keygen -q -f /home/#{user}/.ssh/id_rsa -N \"\""
-	    #utilities.run_with_input "ssh-keygen", /.*/
 	  end
 	  before "gitosis:copy_ssh", "gitosis:generate_ssh"
 	
@@ -56,6 +55,5 @@ Capistrano::Configuration.instance(true).load do
 	  before "gitosis:setup_packages", "gitosis:cleanup"
 	  after "gitosis:setup_packages", "gitosis:cleanup"
 	  
-	
 	end
 end

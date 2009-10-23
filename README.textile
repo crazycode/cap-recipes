@@ -17,12 +17,13 @@ Currently included recipes in this gem:
  * Apache Server     
  * Phusion Passenger
  * Memcached Management
+ * ThinkingSphinx Daemon
  * Juggernaut Daemon
  * Backgroundrb Server
  * DelayedJob Worker
  * Whenever Cron Scheduling
  * Aptitude Package Management
- * Gitosis Git Repository Setup
+ * Gitosis Git Repository Hosting 
  
 Check out the USAGE section below for specific tasks included in the recipes. 
 
@@ -34,8 +35,7 @@ To install the gem, execute:
 
 Then, include into your @deploy.rb@ configuration file for Capistrano:
 
-<pre>
-<code>
+<pre><code>
   # use the complete deployment process (NOT RECOMMENDED)
   require 'cap_recipes'
 
@@ -45,7 +45,9 @@ Then, include into your @deploy.rb@ configuration file for Capistrano:
   # tasks for managing and tasks for installing):
   require 'cap_recipes/tasks/memcache'
   require 'cap_recipes/tasks/passenger'
-  # or ruby, rubygems, rails, apache, delayed_job, juggernaut, backgroundrb, aptitude, whenever
+  require 'cap_recipes/tasks/thinking_sphinx'
+  require 'cap_recipes/tasks/rails'
+  # or ruby, rubygems, apache, delayed_job, juggernaut, backgroundrb, aptitude, gitosis, whenever
 
   # OR
   # only use managing tasks:
@@ -54,8 +56,7 @@ Then, include into your @deploy.rb@ configuration file for Capistrano:
   # OR
   #only use install tasks:
   require 'cap_recipes/tasks/memcache/install'
-</code>
-</pre>
+</code></pre>
 
 You can find full examples of what your @deploy.rb@ file should look like in the @examples@ folder.
 
@@ -67,7 +68,9 @@ These recipes manage the apache web server
 
 h4. Configuration
 
+
   * apache_init_path - the path to the init.d apache file [default: '/etc/init.d/apache2']
+
 
 h4. Tasks
 
@@ -85,8 +88,10 @@ h3. Ruby
 
 h4. Configuration
 
+
   * None required
   
+
 h4. Tasks
 
 install.rb
@@ -97,8 +102,10 @@ h3. Rubygems
 
 h4. Configuration
 
+
   * rubygem_paths - a path or array of paths to your gem binaries [default '/usr/bin/gem' ]
   * rubygems_version - which version of rubygems to install [default '1.3.5']
+
 
 h4. Tasks
 
@@ -121,6 +128,7 @@ These recipes manage the passenger module for apache
 
 h4. Configuration
 
+
  * base_ruby_path - the base path to the ruby installation [default: '/usr']
  * local_ping_path - the localhost path to ping to start passenger [default: "http://localhost"]
 
@@ -129,6 +137,7 @@ The following files and folders are expected to exist:
  * "#{base_ruby_path}/lib/ruby"
  * "#{base_ruby_path}/bin/ruby"
  * "#{base_ruby_path}/bin/gem"
+
 
 h4. Tasks
 
@@ -169,14 +178,12 @@ manage.rb
       
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:update_code", "rails:symlink_db_config" # copy database.yml file to release path
 after "deploy:update_code", "rails:sweep:cache" # clear cache after updating code
 after "deploy:restart"    , "rails:repair_permissions" # fix the permissions to work properly
 after "deploy:restart"    , "rails:ping" # ping passenger to start the rails instance
-</code>
-</pre>
+</code></pre>
 
 h3. DelayedJob
 
@@ -184,8 +191,10 @@ These recipes are for tobi's delayed_job plugin for background job queue process
 
 h4. Configuration
 
-  * delayed_script_path - the path to the delayed job script [default: 'script/delayed_job']
+
+  * delayed_script_path - the path to the delayed job script [default: '#{current_path}/script/delayed_job']
   * delayed_job_env - the rails environment [default: 'production']
+
 
 h4. Tasks
 
@@ -197,13 +206,11 @@ manage.rb
 
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:start",   "delayed_job:start"
 after "deploy:stop",    "delayed_job:stop"
 after "deploy:restart", "delayed_job:restart"
-</code>
-</pre>
+</code></pre>
 
 h3. Backgroundrb
 
@@ -211,9 +218,11 @@ These recipes are for backgroundrb job queue processing
 
 h4. Configuration
 
+
   * backgroundrb_log - the path to the backgroundrb log file
   * backgroundrb_host - the background host machine ip [default: 'localhost']
   * backgroundrb_env - the rails environment [default: 'production']
+
 
 h4. Tasks
 
@@ -227,13 +236,11 @@ manage.rb
       
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:update_code"   , "backgroundrb:symlink_config" # copy backgroundrb config to release
 after "deploy:restart"       , "backgroundrb:restart"     # restart backgroundrb daemon
 after "backgroundrb:restart" , "backgroundrb:repair_permissions" # restart backgroundrb damon
-</code>
-</pre>
+</code></pre>
 
 h3. Juggernaut
 
@@ -241,9 +248,11 @@ These recipes are for managing the juggernaut push server
 
 h4. Configuration
 
+
   * juggernaut_config - path to juggernaut config file [default: "#{current_path}/config/juggernaut.yml"]
   * juggernaut_pid - path to juggernaut pid file [default: "#{current_path}/tmp/pids/juggernaut.pid"]
   * juggernaut_log - path to juggernaut log file [default: "#{current_path}/log/juggernaut.log"]
+
 
 h4. Tasks
 
@@ -257,12 +266,42 @@ manage.rb
 
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:update_code", "juggernaut:symlink_config" # copy juggernaut.yml to release
 after "deploy:restart"    , "juggernaut:restart"     # restart juggernaut daemon
-</code>
-</pre>
+</code></pre>
+
+h3. ThinkingSphinx
+
+These recipes are for managing the thinking_sphinx search index daemon
+
+h4. Configuration
+
+
+  * None required
+
+
+h4. Tasks
+
+manage.rb
+
+  * thinking_sphinx:start - starts the thinking_sphinx search daemon
+  * thinking_sphinx:index - executes the thinking_sphinx search indexer
+  * thinking_sphinx:stop  - stop the thinking_sphinx search daemon
+  * thinking_sphinx:restart - restart (and index) the thinking_sphinx search daemon
+  * thinking_sphinx:symlink_config - copy sphinx.yml from shared/config to release
+  * thinking_sphinx:tail - tails the juggernaut log file in production
+
+install.rb
+
+  * thinking_sphinx:install - installs sphinx, dependencies, and thinking_sphinx gem
+
+hooks.rb
+
+<pre><code>
+after "deploy:update_code", "thinking_sphinx:symlink_config" # sym thinking_sphinx.yml on update code
+after "deploy:restart"    , "thinking_sphinx:restart"     # restart thinking_sphinx on app restart
+</code></pre>
 
 h3. Memcache
 
@@ -270,11 +309,13 @@ These recipes are for managing the memcached caching mechanism
 
 h4. Configuration
 
+
   * memcache_init_path - path to memcache config file [default: "/etc/init.d/memcache"]
   * memcache_size - the total size of memory to use [default: 64]
   * memcache_port - the port to start memcache [default: '11211']
   * memcache_host - the host for memcache [default: '127.0.0.1']
   * memcache_user - the user to run memcache [default: 'nobody']
+
 
 h4. Tasks
 
@@ -290,11 +331,25 @@ install.rb
     
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:restart", "memcache:restart" # clear cache after updating code
-</code>
-</pre>
+</code></pre>
+
+h3. Gitosis
+
+These recipes are for installing Gitosis Git Repository Hosting
+
+h4. Configuration
+
+
+  * None required
+
+
+h4. Tasks
+
+install.rb
+
+  * gitosis:install
 
 h3. Whenever
 
@@ -302,8 +357,10 @@ These recipes are for managing whenever cron job scheduling
 
 h4. Configuration
 
+
   * None required
-  
+
+
 h4. Tasks
 
 manage.rb
@@ -312,11 +369,9 @@ manage.rb
 
 hooks.rb
 
-<pre>
-<code>
+<pre><code>
 after "deploy:symlink", "whenever:update_crontab"
-</code>
-</pre>
+</code></pre>
 
 h3. Gitosis
 
@@ -336,8 +391,7 @@ h2. EXAMPLE
 
 Here is a sample deploy.rb file using cap_recipes:
 
-<pre>
-<code>
+<pre><code>
 # =============================================================================
 # GENERAL SETTINGS
 # =============================================================================
@@ -379,8 +433,7 @@ set :juggernaut_log, "/var/log/juggernaut.log" # defaults to #{release_path}/log
 # MEMCACHE
 require 'cap_recipes/tasks/memcache'
 set :memcache_init_path, "/etc/init.d/memcache" # defaults to "/etc/init.d/memcache"
-</code>
-</pre>
+</code></pre>
 
 You can find more examples of what your @deploy.rb@ file should look like in the @examples@ folder.
 
@@ -420,8 +473,16 @@ to browse all available utility methods. A few are listed below:
  * utilities.with_credentials(:user => 'jsmith', :password => 'secret') { ... }
  ** Forces tasks in block to execute using the given user/password credentials
  ** This is useful because of certain limitations in capistrano
+ 
+h2. CONTRIBUTORS
 
-h2. LICENSE:
+The following people are the reason this library exists:
+
+  * nesquena [Nathan Esquenazi] - created and maintaining the library
+  * achiu    [Arthur Chiu]      - contributed gitosis, ruby and other recipes
+  * hubertlepicki               - contributed thinking_sphinx recipes
+
+h2. LICENSE
 
 (The MIT License)
 
