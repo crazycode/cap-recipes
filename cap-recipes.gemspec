@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Esquenazi"]
-  s.date = %q{2009-10-22}
+  s.date = %q{2009-10-25}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{nesquena@gmail.com}
   s.extra_rdoc_files = [
@@ -39,8 +39,11 @@ Gem::Specification.new do |s|
      "lib/cap_recipes/tasks/delayed_job.rb",
      "lib/cap_recipes/tasks/delayed_job/hooks.rb",
      "lib/cap_recipes/tasks/delayed_job/manage.rb",
+     "lib/cap_recipes/tasks/ec2/install.rb",
+     "lib/cap_recipes/tasks/ec2/manage.rb",
      "lib/cap_recipes/tasks/gitosis.rb",
      "lib/cap_recipes/tasks/gitosis/install.rb",
+     "lib/cap_recipes/tasks/gitosis/manage.rb",
      "lib/cap_recipes/tasks/juggernaut.rb",
      "lib/cap_recipes/tasks/juggernaut/hooks.rb",
      "lib/cap_recipes/tasks/juggernaut/manage.rb",
@@ -48,6 +51,8 @@ Gem::Specification.new do |s|
      "lib/cap_recipes/tasks/memcache/hooks.rb",
      "lib/cap_recipes/tasks/memcache/install.rb",
      "lib/cap_recipes/tasks/memcache/manage.rb",
+     "lib/cap_recipes/tasks/mongodb.rb",
+     "lib/cap_recipes/tasks/mongodb/install.rb",
      "lib/cap_recipes/tasks/passenger.rb",
      "lib/cap_recipes/tasks/passenger/install.rb",
      "lib/cap_recipes/tasks/passenger/manage.rb",
