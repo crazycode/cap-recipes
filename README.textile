@@ -372,6 +372,7 @@ hooks.rb
 <pre><code>
 after "deploy:symlink", "whenever:update_crontab"
 </code></pre>
+<<<<<<< HEAD:README.textile
 
 h3. Gitosis
 

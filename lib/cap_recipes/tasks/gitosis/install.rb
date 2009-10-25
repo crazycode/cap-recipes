@@ -1,4 +1,3 @@
-
 require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 
 Capistrano::Configuration.instance(true).load do
