@@ -24,6 +24,7 @@ Currently included recipes in this gem:
  * Whenever Cron Scheduling
  * Aptitude Package Management
  * Gitosis Git Repository Hosting 
+ * Mongodb Management
  
 Check out the USAGE section below for specific tasks included in the recipes. 
 
@@ -374,9 +375,9 @@ after "deploy:symlink", "whenever:update_crontab"
 </code></pre>
 <<<<<<< HEAD:README.textile
 
-h3. Gitosis
+h3. Mongodb
 
-These recipes are for setuping up a Gitosis Repository
+These recipes are for installing and managing Mongodb
 
 h4. Configuration
   
@@ -386,7 +387,13 @@ h4. Tasks
 
 install.rb
 
-  * gitosis:install - Performs the full install of Gitosis to your server.
+  * mongodb:install - Performs the full install of Mongodb to your server.
+
+manage.rb
+
+  * mongodb:start - Starts the mongodb. set db_path at mongodb_path and log at mongodb_log
+  * mongodb:stop - Stops the mongodb.
+  * mongodb:restart - Restarts the mongodb.
 
 h2. EXAMPLE
 

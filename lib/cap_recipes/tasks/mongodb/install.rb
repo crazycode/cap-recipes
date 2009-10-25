@@ -29,10 +29,10 @@ Capistrano::Configuration.instance(true).load do
       run "cd ~/tmp/mongo ; #{sudo} scons all"
       run "cd ~/tmp/mongo ; #{sudo} scons --prefix=/opt/mongo install"
     end
-    after "mongodb:install_mongodb", "mongodb:execute_db"
+    after "mongodb:install_mongodb", "mongodb:create_db_path"
 
 
-    task :execute_db, :role => :app do
+    task :create_db_path, :role => :app do
       sudo "mkdir -p #{mongodb_path}"
       # sudo "/opt/mongo/bin/mongod --dbpath #{mongodb_path}"
     end
