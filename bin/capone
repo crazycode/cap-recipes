@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($0)} [recipe] [path]"
+
+  opts.on("-h", "--help", "Displays this help info") do
+    puts opts
+    exit 0
+  end
+
+  begin
+    opts.parse!(ARGV)
+  rescue OptionParser::ParseError => e
+    warn e.message
+    puts opts
+    exit 1
+  end
+end
+
+abort "Please specify the directory to capify, e.g. `#{File.basename($0)} .'" if ARGV.empty?
+
+options = ARGV
+path = options.last
+options.delete(options.last)
+
+recipes = options.collect { |recipe| "require \'lib/cap_recipes/tasks/" + recipe + "\'\n" }.join
+
+
+
+def unindent(string)
+  indentation = string[/\A\s*/]
+  string.strip.gsub(/^#{indentation}/, "")
+end
+
+files = {
+  "Capfile" => unindent(<<-FILE),
+  load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+  Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
+
+  load 'config/deploy' # remove this line to skip loading any of the default tasks
+  FILE
+
+  "config/deploy.rb" => 'role :web, "demo.app.com"
+role :app, "demo.app.com"
+role :db,  "demo.app.com", :primary => true
+
+set :application,  "demo"
+set :deploy_to,  "/var/apps/#{application}"
+set :deploy_via, :remote_cache
+set :scm, :git
+set :repository, "deploy@dev.demo.com:/home/demo.git"
+set :git_enable_submodules, 1
+set :keep_releases, 3
+set :user, "deploy"
+set :runner, "deploy"
+set :password, "demo567"
+set :use_sudo, true
+set :branch, "master"
+
+ssh_options[:paranoid] = false
+default_run_options[:pty] = true
+'}
+
+base = path
+FileUtils.mkdir_p(base)
+files.each do |file,content|
+  file = File.join(base, file)
+  case file
+  when File.exists?(file)
+    warn "[skip] '#{file}' already exists"
+  when File.exists?(file.downcase)
+    warn "[skip] '#{file.downcase}' exists, which could conflict with `#{file}'"
+  else
+    unless File.exists?(File.dirname(file))
+      puts "[add] making directory '#{File.dirname(file)}'"
+      FileUtils.mkdir(File.dirname(file))
+    end
+    puts "[add] writing '#{file}'"
+    doc = content + ( file =~ /deploy/ ? "\n" + recipes : "\n" )
+    File.open(file, "w") { |f| f.write(doc) }
+  end
+end
+
+puts "[done] capified!"
+

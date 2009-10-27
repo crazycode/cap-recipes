@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2009-10-25}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{nesquena@gmail.com}
+  s.executables = ["capone"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.textile"
