@@ -2,14 +2,18 @@
 require 'optparse'
 require 'fileutils'
 
-folders = Dir.glob( File.dirname(__FILE__) + "/../lib/cap_recipes/tasks/*.rb").collect { |folder| File.basename(folder, ".rb") }
+folders = Dir.glob( File.dirname(__FILE__) + "/../lib/cap_recipes/tasks/*.rb").inject({}) do |packages,file|
+  desc =  IO.readlines(file).first
+  packages[File.basename(file, ".rb")] = ((desc =~ /#/) ? desc : "No description")
+  packages
+end
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [recipe] [path]"
 
   opts.on("-l", "--list", "lists all the recipes") do
     puts "Avaiable Recipes:"
-    puts folders.collect { |line| "\t* #{line}"}.join("\n")
+    puts folders.collect { |folder,desc| "\t* #{folder} - #{desc}"}.join("\n")
     exit 0
   end
 
