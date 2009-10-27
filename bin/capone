@@ -1,10 +1,17 @@
 #!/usr/bin/env ruby
-
 require 'optparse'
 require 'fileutils'
 
+folders = Dir.glob( File.dirname(__FILE__) + "/../lib/cap_recipes/tasks/*.rb").collect { |folder| File.basename(folder, ".rb") }
+
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [recipe] [path]"
+
+  opts.on("-l", "--list", "lists all the recipes") do
+    puts "Avaiable Recipes:"
+    puts folders.collect { |line| "\t* #{line}"}.join("\n")
+    exit 0
+  end
 
   opts.on("-h", "--help", "Displays this help info") do
     puts opts
@@ -26,7 +33,7 @@ options = ARGV
 path = options.last
 options.delete(options.last)
 
-recipes = options.collect { |recipe| "require \'lib/cap_recipes/tasks/" + recipe + "\'\n" }.join
+recipes = options.collect { |recipe| "require \'cap_recipes/tasks/" + recipe + "\'\n" }.join
 
 
 
