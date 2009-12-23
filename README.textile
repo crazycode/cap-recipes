@@ -397,27 +397,6 @@ hooks.rb
 <pre><code>
 after "deploy:symlink", "whenever:update_crontab"
 </code></pre>
-<<<<<<< HEAD:README.textile
-
-h3. Mongodb
-
-These recipes are for installing and managing Mongodb
-
-h4. Configuration
-  
-  * None required
-  
-h4. Tasks
-
-install.rb
-
-  * mongodb:install - Performs the full install of Mongodb to your server.
-
-manage.rb
-
-  * mongodb:start - Starts the mongodb. set db_path at mongodb_path and log at mongodb_log
-  * mongodb:stop - Stops the mongodb.
-  * mongodb:restart - Restarts the mongodb.
 
 h2. EXAMPLE
 
