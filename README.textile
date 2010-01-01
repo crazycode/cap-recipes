@@ -485,29 +485,42 @@ to browse all available utility methods. A few are listed below:
  ** Forces tasks in block to execute using the given user/password credentials
  ** This is useful because of certain limitations in capistrano
 
-h2. CAPONE
+h2. CAP-RECIPES
 
-Capone allows you to create config with the desired recipes. It's capify for cap-recipes.
+cap-recipes allows you to create config with the desired recipes. It's capify for cap-recipes.
 
 USAGE:
 
 <code>
-  capone [recipes] [path]
+  cap-recipes [path] -r task1 task2 task3
 </code>
 
 
 include memcache,apache, and passenger recipes
 
 <code>
-  capone memcache apache passenger .
+  cap-recipes . -require memcache apache passenger | cap-recipes . -r memcache apache passenger
 </code>
 
 show all available recipes
 
 <code>
-  capone --list | capone -l
+  cap-recipes --list | cap-recipes -l
 </code>
 
+show help
+
+<code>
+  cap-recipes --help | cap-recipes -h
+</code>
+
+generate standard capify
+
+<code>
+  cap-recipes
+</code>
+
+this defaults path to '.'
  
 h2. CONTRIBUTORS
 
