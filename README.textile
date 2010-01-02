@@ -492,14 +492,14 @@ cap-recipes allows you to create config with the desired recipes. It's capify fo
 USAGE:
 
 <code>
-  cap-recipes [path] -r task1 task2 task3
+  cap-recipes [path] [task1] [task2] [task3]
 </code>
 
 
 include memcache,apache, and passenger recipes
 
 <code>
-  cap-recipes . -require memcache apache passenger | cap-recipes . -r memcache apache passenger
+  cap-recipes . memcache apache passenger
 </code>
 
 show all available recipes
@@ -517,7 +517,7 @@ show help
 generate standard capify
 
 <code>
-  cap-recipes
+  cap-recipes . | cap-recipes
 </code>
 
 this defaults path to '.'
