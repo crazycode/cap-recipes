@@ -82,7 +82,8 @@ Gem::Specification.new do |s|
      "spec/cap/all/Capfile",
      "spec/cap/helper.rb",
      "spec/cap_recipes_spec.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "specs.watchr"
   ]
   s.homepage = %q{http://github.com/nesquena/cap-recipes}
   s.rdoc_options = ["--charset=UTF-8"]

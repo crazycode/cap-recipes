@@ -1,4 +1,5 @@
-%w[rubygems thor].each { |gem| require gem }
+require 'rubygems'
+require 'thor/group'
 # require File.dirname(__FILE__) + "/../lib/templates"
 
 class CapRecipes < Thor::Group
