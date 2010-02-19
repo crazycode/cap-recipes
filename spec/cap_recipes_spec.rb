@@ -1,5 +1,6 @@
 require File.expand_path("spec_helper", File.dirname(__FILE__))
 require File.dirname(__FILE__) + '/../lib/capify'
+
 describe 'loading everything' do
   def run_cap(folder,task)
     folder = File.join(File.dirname(__FILE__),'cap',folder)

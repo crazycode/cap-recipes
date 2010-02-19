@@ -9,10 +9,11 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Esquenazi"]
-  s.date = %q{2009-10-27}
+  s.date = %q{2010-02-19}
+  s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{nesquena@gmail.com}
-  s.executables = ["capone"]
+  s.executables = ["cap-recipes"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.textile"
@@ -23,6 +24,7 @@ Gem::Specification.new do |s|
      "README.textile",
      "Rakefile",
      "VERSION.yml",
+     "bin/cap-recipes",
      "cap-recipes.gemspec",
      "examples/advanced/deploy.rb",
      "examples/advanced/deploy/experimental.rb",
@@ -44,6 +46,7 @@ Gem::Specification.new do |s|
      "lib/cap_recipes/tasks/ec2/manage.rb",
      "lib/cap_recipes/tasks/gitosis.rb",
      "lib/cap_recipes/tasks/gitosis/install.rb",
+     "lib/cap_recipes/tasks/gitosis/manage.rb",
      "lib/cap_recipes/tasks/juggernaut.rb",
      "lib/cap_recipes/tasks/juggernaut/hooks.rb",
      "lib/cap_recipes/tasks/juggernaut/manage.rb",
@@ -73,6 +76,9 @@ Gem::Specification.new do |s|
      "lib/cap_recipes/tasks/whenever.rb",
      "lib/cap_recipes/tasks/whenever/hooks.rb",
      "lib/cap_recipes/tasks/whenever/manage.rb",
+     "lib/capify.rb",
+     "lib/templates/Capfile.tt",
+     "lib/templates/deploy.rb.tt",
      "spec/cap/all/Capfile",
      "spec/cap/helper.rb",
      "spec/cap_recipes_spec.rb",

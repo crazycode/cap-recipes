@@ -1,6 +1,7 @@
 # ---- requirements
 require 'rubygems'
 require 'spec'
+require 'redgreen'
 
 $LOAD_PATH << File.expand_path("../lib", File.dirname(__FILE__))
 $LOAD_PATH << File.join(File.dirname(__FILE__),'..','..','bin')
@@ -30,4 +31,7 @@ Spec::Runner.configure do |config|
 
     result
   end
+  
+  def fake; end
+  
 end
