@@ -14,9 +14,12 @@ Capistrano::Configuration.instance(true).load do
     end
     
 
-    desc "install build-essentials package"
+    desc "install build-essentials and other packages"
     task :install_build_essential do
       utilities.apt_install 'build-essential'
+      utilities.apt_install 'apache2-prefork-dev'
+      utilities.apt_install 'libapr1-dev'
+      utilities.apt_install 'libaprutil1-dev'
     end
     before "passenger:install", "passenger:install_build_essential"
 
