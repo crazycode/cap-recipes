@@ -26,6 +26,7 @@ Currently included recipes in this gem:
  * Aptitude Package Management
  * Gitosis Git Repository Hosting 
  * Mongodb Management
+ * Bundler Tasks
  
 Check out the USAGE section below for specific tasks included in the recipes. 
 
@@ -397,6 +398,35 @@ hooks.rb
 <pre><code>
 after "deploy:symlink", "whenever:update_crontab"
 </code></pre>
+
+
+h3. Bundler
+
+These recipes are for managing bundler with your project
+
+h4. Configuration
+
+
+  * None required
+
+
+h4. Tasks
+
+manage.rb
+
+  * bundle:install - Performs bundle install
+  * bundle:lock    - Performs bundle lock
+  * bundle:unlock  - Performs bundle unlock
+  * bundle:show    - Performs bundle show
+  * bundle:check   - Performs bundle check
+hooks.rb
+
+<pre><code>
+after "deploy:symlink", "bundle:lock"
+</code></pre>
+
+
+
 
 h2. EXAMPLE
 

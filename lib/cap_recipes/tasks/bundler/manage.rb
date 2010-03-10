@@ -22,7 +22,7 @@ Capistrano::Configuration.instance(true).load do
     end
     
     desc "bundle check"
-    task :show do
+    task :check do
       run "cd #{deploy_to}/current; bundle check"
     end
 
