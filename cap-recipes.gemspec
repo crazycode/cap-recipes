@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Esquenazi"]
-  s.date = %q{2010-02-19}
+  s.date = %q{2010-03-09}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{nesquena@gmail.com}
@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
      "lib/cap_recipes/tasks/backgroundrb.rb",
      "lib/cap_recipes/tasks/backgroundrb/hooks.rb",
      "lib/cap_recipes/tasks/backgroundrb/manage.rb",
+     "lib/cap_recipes/tasks/bundler.rb",
+     "lib/cap_recipes/tasks/bundler/manage.rb",
      "lib/cap_recipes/tasks/delayed_job.rb",
      "lib/cap_recipes/tasks/delayed_job/hooks.rb",
      "lib/cap_recipes/tasks/delayed_job/manage.rb",
@@ -89,7 +91,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{cap-recipes}
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
   s.test_files = [
     "spec/cap/helper.rb",
