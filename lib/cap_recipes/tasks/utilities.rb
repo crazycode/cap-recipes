@@ -1,6 +1,13 @@
 require 'fileutils'
 
 module Utilities
+
+  # render a template
+  def render(file, binding)
+    template = File.read("#{File.dirname(__FILE__)}/templates/#{file}.erb")
+    result = ERB.new(template).result(binding)
+  end
+
   # utilities.config_gsub('/etc/example', /(.*)/im, "\\1")
   def config_gsub(file, find, replace)
     tmp="/tmp/#{File.basename(file)}"
