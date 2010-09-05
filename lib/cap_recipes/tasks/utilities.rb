@@ -1,6 +1,6 @@
 require 'fileutils'
- 
-module Utilities 
+
+module Utilities
   # utilities.config_gsub('/etc/example', /(.*)/im, "\\1")
   def config_gsub(file, find, replace)
     tmp="/tmp/#{File.basename(file)}"
@@ -10,7 +10,7 @@ module Utilities
     put content, tmp
     sudo "mv #{tmp} #{file}"
   end
-  
+
 
   # utilities.ask('What is your name?', 'John')
   def ask(question, default='')
@@ -25,7 +25,7 @@ module Utilities
     question += ' (y/n)'
     ask(question).downcase.include? 'y'
   end
-  
+
   # utilities.apt_install %w[package1 package2]
   # utilities.apt_install "package1 package2"
   def apt_install(packages)
@@ -34,13 +34,27 @@ module Utilities
     apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get"
     sudo "#{apt_get} -qyu --force-yes install #{packages.join(" ")}"
   end
-  
+
   def apt_upgrade
     apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get"
     sudo "#{apt_get} -qy update"
     sudo "#{apt_get} -qyu --force-yes upgrade"
   end
-  
+  # utilities.yum_install %w[package1 package2]
+  # utilities.yum_install "package1 package2"
+  def yum_install(packages)
+    packages = packages.split(/\s+/) if packages.respond_to?(:split)
+    packages = Array(packages)
+    sudo "yum -y install #{packages.join(" ")}"
+  end
+
+  def yum_update
+    apt_get="DEBCONF_TERSE='yes' DEBIAN_PRIORITY='critical' DEBIAN_FRONTEND=noninteractive apt-get"
+    sudo "yum -y update"
+  end
+
+
+
   # utilities.sudo_upload('/local/path/to/file', '/remote/path/to/destination', options)
   def sudo_upload(from, to, options={}, &block)
     top.upload from, "/tmp/#{File.basename(to)}", options, &block
@@ -48,7 +62,7 @@ module Utilities
     sudo "chmod #{options[:mode]} #{to}" if options[:mode]
     sudo "chown #{options[:owner]} #{to}" if options[:owner]
   end
-  
+
   # utilities.adduser('deploy')
   def adduser(user, options={})
     options[:shell] ||= '/bin/bash' # new accounts on ubuntu 6.06.1 have been getting /bin/sh
@@ -59,7 +73,7 @@ module Utilities
     invoke_command "grep '^#{user}:' /etc/passwd || sudo /usr/sbin/adduser #{user} #{switches}",
     :via => run_method
   end
-  
+
   # role = :app
   def with_role(role, &block)
     original, ENV['HOSTS'] = ENV['HOSTS'], find_servers(:roles => role).map{|d| d.host}.join(",")
@@ -83,11 +97,11 @@ module Utilities
       set :password, original_password
     end
   end
-  
+
   def space(str)
     "\n#{'=' * 80}\n#{str}"
   end
-  
+
   ##
   # Run a command and ask for input when input_query is seen.
   # Sends the response back to the server.
@@ -98,7 +112,7 @@ module Utilities
   def run_with_input(shell_command, input_query=/^Password/, response=nil)
     handle_command_with_input(:run, shell_command, input_query, response)
   end
- 
+
   ##
   # Run a command using sudo and ask for input when a regular expression is seen.
   # Sends the response back to the server.
@@ -108,13 +122,13 @@ module Utilities
   def sudo_with_input(shell_command, input_query=/^Password/, response=nil)
     handle_command_with_input(:sudo, shell_command, input_query, response)
   end
- 
+
   def invoke_with_input(shell_command, input_query=/^Password/, response=nil)
     handle_command_with_input(run_method, shell_command, input_query, response)
   end
-  
+
   private
-  
+
   ##
   # Does the actual capturing of the input and streaming of the output.
   #
@@ -123,7 +137,7 @@ module Utilities
   # input_query: A regular expression matching a request for input: /^Please enter your password/
   def handle_command_with_input(local_run_method, shell_command, input_query, response=nil)
     send(local_run_method, shell_command, {:pty => true}) do |channel, stream, data|
-      
+
       if data =~ input_query
         if response
           logger.info "#{data} #{"*"*(rand(10)+5)}", channel[:host]
@@ -138,8 +152,8 @@ module Utilities
       end
     end
   end
-  
-  
+
+
 end
- 
+
 Capistrano.plugin :utilities, Utilities

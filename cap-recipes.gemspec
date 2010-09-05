@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Esquenazi"]
-  s.date = %q{2010-03-09}
+  s.date = %q{2010-09-05}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{nesquena@gmail.com}
@@ -91,23 +91,23 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{cap-recipes}
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
   s.test_files = [
-    "spec/cap/helper.rb",
+    "spec/spec_helper.rb",
+     "spec/cap/helper.rb",
      "spec/cap_recipes_spec.rb",
-     "spec/spec_helper.rb",
-     "examples/advanced/deploy/experimental.rb",
+     "examples/simple/deploy.rb",
      "examples/advanced/deploy/production.rb",
-     "examples/advanced/deploy.rb",
-     "examples/simple/deploy.rb"
+     "examples/advanced/deploy/experimental.rb",
+     "examples/advanced/deploy.rb"
   ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
     else
     end
   else
