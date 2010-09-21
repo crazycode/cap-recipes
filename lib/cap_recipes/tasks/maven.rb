@@ -44,7 +44,7 @@ Capistrano::Configuration.instance(true).load do
     end
 
     desc "deploy all module"
-    task :deploy do
+    task :mdeploy do
       if exists?(:modules)
         #default
         modules.each do |key, module_setting|
@@ -58,7 +58,27 @@ Capistrano::Configuration.instance(true).load do
           set :deploy_via, :copy
           set :use_sudo, true
 
-          deploy.default
+          deploy.update_code :roles => webserver
+        end
+      end
+    end
+    desc "deploy all module"
+    task :msetup do
+      if exists?(:modules)
+        #default
+        modules.each do |key, module_setting|
+          puts "do #{key}...#{module_setting[:name]}"
+          set :scm, :none
+          set :application, module_setting[:name]
+          set :module_dir, module_setting[:module_dir].nil? ? name : module_setting[:module_dir]
+          set :war, "#{source_dir}/#{module_dir}/target/#{module_setting[:war_name]}"
+          set :webserver, module_setting[:webserver]
+
+          set :scm, :none
+          set :deploy_via, :copy
+          set :use_sudo, true
+
+          deploy.setup :roles => webserver
         end
       end
     end
