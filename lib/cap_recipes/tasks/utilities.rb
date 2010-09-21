@@ -1,6 +1,12 @@
 require 'fileutils'
 
 module Utilities
+  # set var
+  def _cset(name, *args, &block)
+    unless exists?(name)
+      set(name, *args, &block)
+    end
+  end
 
   # render a template
   def render(file, binding)

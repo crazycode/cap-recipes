@@ -2,8 +2,9 @@ require 'fileutils'
 require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 
 Capistrano::Configuration.instance(true).load do
-  set :scm, :none
-  set :deploy_via, :copy
+  # TOMCAT SERVERS
+  _cset :tomcat_home, "/usr/local/apache-tomcat-6.0.29"
+  _cset :tomcat_ctrl, "/etc/init.d/tomcat"
 
   #
   # simple interactions with the tomcat server

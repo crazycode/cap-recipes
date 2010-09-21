@@ -1,8 +1,13 @@
+require File.expand_path(File.dirname(__FILE__) + '/../utilities')
+
 Capistrano::Configuration.instance(true).load do
   # DEPLOYMENT SCHEME
   set :scm, :none
   set :deploy_via, :copy
   set :use_sudo, true
+
+  _cset :deploy_to_parent, "/srv/applications"
+
   default_run_options[:pty] = true
 
   set :keep_releases, 5
@@ -22,7 +27,10 @@ Capistrano::Configuration.instance(true).load do
   # you may need to create it and chown it over
   # to :user (e.g. chown -R robotuser:robotuser /u)
   set :deploy_to do
-    "#{deploy_dir}/#{application}"
+    dir = "#{deploy_to_parent}/#{application}"
+    sudo "mkdir -p #{dir}"
+    sudo "chown #{user} #{dir}"
+    dir
   end
 
   #
