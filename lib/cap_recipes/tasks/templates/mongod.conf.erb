@@ -1,5 +1,10 @@
 # mongo.conf
 replSet=<%= mongodb_nodename %>
+rest=true
+
+<% if mongodb_is_configsvr %>
+configsvr=true
+<% end %>
 
 #where to log
 logpath=/var/log/mongo/<%= mongodb_name %>.log
@@ -7,11 +12,12 @@ logpath=/var/log/mongo/<%= mongodb_name %>.log
 logappend=true
 
 # fork and run in background
-fork = true
+fork=true
 
-port = <%= mongodb_port %>
+port=<%= mongodb_port %>
 
 dbpath=<%= mongodb_data_path %>
+
 
 # Enables periodic logging of CPU utilization and I/O wait
 #cpu = true
@@ -79,14 +85,3 @@ dbpath=<%= mongodb_data_path %>
 # or
 #master = true
 #source = slave.example.com
-
-# Address of a server to pair with.
-#pairwith = <server:port>
-# Address of arbiter server.
-#arbiter = <server:port>
-# Automatically resync if slave data is stale
-#autoresync
-# Custom size for replication operation log.
-#oplogSize = <MB>
-# Size limit for in-memory storage of op ids.
-#opIdMem = <bytes>

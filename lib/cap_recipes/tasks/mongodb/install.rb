@@ -13,6 +13,7 @@ Capistrano::Configuration.instance(true).load do
   _cset :mongodb_init, "/etc/init.d/#{mongodb_name}"
   _cset :mongodb_data_path, "/var/data/#{mongodb_name}"
   _cset :mongodb_port, 27017
+  _cset :mongodb_is_configsvr, false
 
   namespace :mongodb do
     desc "Installs mongodb binaries and all dependencies"
@@ -43,6 +44,16 @@ Capistrano::Configuration.instance(true).load do
     task :setup_db_path, :role => :app do
       sudo "mkdir -p #{mongodb_data_path}"
       mongodb.start
+    end
+
+    # for centos
+    task :yum_install, :role => :app do
+      put utilities.render("mongodb.repo", binding), "mongodb.repo.tmp"
+      sudo "cp mongodb.repo.tmp /etc/yum.repos.d/MongoDB.repo"
+      run "rm mongodb.repo.tmp"
+
+      sudo "yum update"
+      sudo "yum install mongo-stable-server"
     end
 
     task :setup_node, :role => :app do
