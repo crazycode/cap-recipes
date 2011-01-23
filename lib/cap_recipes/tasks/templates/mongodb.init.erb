@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# <%= mongodb_name %> - Startup script for mongod
+
+# chkconfig: 35 85 15
+# description: Mongo is a scalable, document-oriented database.
+# processname: <%= mongodb_name %>
+# config: /etc/<%= mongodb_name %>.conf
+# pidfile: /var/run/mongo/<%= mongodb_name %>.pid
+
+. /etc/rc.d/init.d/functions
+
+# things from <%= mongodb_name %>.conf get there by mongod reading it
+
+OPTIONS=" -f /etc/<%= mongodb_name %>.conf"
+SYSCONFIG="/etc/sysconfig/mongod"
+
+mongod=${MONGOD-/usr/bin/mongod}
+
+MONGO_USER=mongod
+MONGO_GROUP=mongod
+
+. "$SYSCONFIG" || true
+
+start()
+{
+  echo -n $"Starting mongod: "
+  daemon --user "$MONGO_USER" $mongod $OPTIONS
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/<%= mongodb_name %>
+}
+
+stop()
+{
+  echo -n $"Stopping mongod: "
+  killproc -p /var/lib/mongo/<%= mongodb_name %>.lock -t30 -TERM /usr/bin/mongod
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/<%= mongodb_name %>
+}
+
+restart () {
+        stop
+        start
+}
+
+ulimit -n 12000
+RETVAL=0
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload|force-reload)
+    restart
+    ;;
+  condrestart)
+    [ -f /var/lock/subsys/<%= mongodb_name %> ] && restart || :
+    ;;
+  status)
+    status $mongod
+    RETVAL=$?
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    RETVAL=1
+esac
+
+exit $RETVAL

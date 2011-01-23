@@ -2,10 +2,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 require File.expand_path(File.dirname(__FILE__) + '/manage')
 
 Capistrano::Configuration.instance(true).load do
-  set :mongodb_data_path, "/data/db"
+  #set :mongodb_data_path, "/data/db"
   set :mongodb_bin_path, "/opt/mongo"
-  
-  namespace :mongodb do    
+
+  _cset :mongodb_nodename, "node0"
+  _cset :mongodb_name, "mongod_#{mongodb_nodename}"
+  _cset :mongod_conf, "/etc/#{mongodb_name}.conf"
+  _cset :mongodb_init, "/etc/init.d/#{mongodb_name}"
+  _cset :mongodb_data_path, "/var/data/#{mongodb_name}"
+  _cset :mongodb_port, 27017
+
+  namespace :mongodb do
     desc "Installs mongodb binaries and all dependencies"
     task :install, :role => :app do
       utilities.apt_install "tcsh scons g++ libpcre++-dev"
@@ -34,6 +41,22 @@ Capistrano::Configuration.instance(true).load do
     task :setup_db_path, :role => :app do
       sudo "mkdir -p #{mongodb_data_path}"
       mongodb.start
+    end
+
+    task :setup_node, :role => :app do
+
+      # create config file
+      put utilities.render("mongod.conf", binding), "mongod.conf.tmp"
+      put utilities.render("mongodb.init", binding), "mongodb.init.tmp"
+      sudo "cp mongod.conf.tmp #{mongod_conf}"
+      sudo "cp mongod.init.tmp #{mongodb_init}"
+      #sudo "/sbin/chkconfig --add #{mongodb_name}"
+      run "rm mongod.conf.tmp"
+      run "rm mongodb.init.tmp"
+
+      sudo "mkdir -p #{mongodb_data_path}"
+      sudo "chown mongod:mongod #{mongodb_data_path}"
+
     end
   end
 end
