@@ -2,6 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../utilities')
 require File.expand_path(File.dirname(__FILE__) + '/manage')
 
 Capistrano::Configuration.instance(true).load do
+  default_run_options[:pty] = true
+
   #set :mongodb_data_path, "/data/db"
   set :mongodb_bin_path, "/opt/mongo"
 
@@ -49,7 +51,7 @@ Capistrano::Configuration.instance(true).load do
       put utilities.render("mongod.conf", binding), "mongod.conf.tmp"
       put utilities.render("mongodb.init", binding), "mongodb.init.tmp"
       sudo "cp mongod.conf.tmp #{mongod_conf}"
-      sudo "cp mongod.init.tmp #{mongodb_init}"
+      sudo "cp mongodb.init.tmp #{mongodb_init}"
       #sudo "/sbin/chkconfig --add #{mongodb_name}"
       run "rm mongod.conf.tmp"
       run "rm mongodb.init.tmp"
