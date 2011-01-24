@@ -63,6 +63,7 @@ Capistrano::Configuration.instance(true).load do
       put utilities.render("mongodb.init", binding), "mongodb.init.tmp"
       sudo "cp mongod.conf.tmp #{mongod_conf}"
       sudo "cp mongodb.init.tmp #{mongodb_init}"
+      sudo "chmod a+x #{mongodb_init}"
       #sudo "/sbin/chkconfig --add #{mongodb_name}"
       run "rm mongod.conf.tmp"
       run "rm mongodb.init.tmp"

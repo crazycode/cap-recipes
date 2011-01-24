@@ -34,7 +34,7 @@ start()
 stop()
 {
   echo -n $"Stopping mongod: "
-  killproc -p /var/lib/mongo/<%= mongodb_name %>.lock -t30 -TERM /usr/bin/mongod
+  killproc -p <%= mongodb_data_path %>/mongod.lock -t30 -TERM /usr/bin/mongod
   RETVAL=$?
   echo
   [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/<%= mongodb_name %>
