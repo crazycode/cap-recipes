@@ -8,10 +8,20 @@ Capistrano::Configuration.instance(true).load do
   set :mongodb_bin_path, "/opt/mongo"
 
   set :mongodb_nodename, "node0"
-  set :mongodb_name, "mongod_#{mongodb_nodename}"
-  set :mongod_conf, "/etc/#{mongodb_name}.conf"
-  set :mongodb_init, "/etc/init.d/#{mongodb_name}"
-  set :mongodb_data_path, "/var/data/#{mongodb_name}"
+
+  set :mongodb_name do
+    "mongod_#{mongodb_nodename}"
+  end
+  set :mongod_conf do
+    "/etc/#{mongodb_name}.conf"
+  end
+  set :mongodb_init do
+    "/etc/init.d/#{mongodb_name}"
+  end
+  set :mongodb_data_path do
+    "/var/data/#{mongodb_name}"
+  end
+
   set :mongodb_port, 27017
   set :mongodb_is_configsvr, false
 
