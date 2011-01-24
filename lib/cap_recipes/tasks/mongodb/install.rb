@@ -7,13 +7,13 @@ Capistrano::Configuration.instance(true).load do
   #set :mongodb_data_path, "/data/db"
   set :mongodb_bin_path, "/opt/mongo"
 
-  _cset :mongodb_nodename, "node0"
-  _cset :mongodb_name, "mongod_#{mongodb_nodename}"
-  _cset :mongod_conf, "/etc/#{mongodb_name}.conf"
-  _cset :mongodb_init, "/etc/init.d/#{mongodb_name}"
-  _cset :mongodb_data_path, "/var/data/#{mongodb_name}"
-  _cset :mongodb_port, 27017
-  _cset :mongodb_is_configsvr, false
+  set :mongodb_nodename, "node0"
+  set :mongodb_name, "mongod_#{mongodb_nodename}"
+  set :mongod_conf, "/etc/#{mongodb_name}.conf"
+  set :mongodb_init, "/etc/init.d/#{mongodb_name}"
+  set :mongodb_data_path, "/var/data/#{mongodb_name}"
+  set :mongodb_port, 27017
+  set :mongodb_is_configsvr, false
 
   namespace :mongodb do
     desc "Installs mongodb binaries and all dependencies"
@@ -47,6 +47,7 @@ Capistrano::Configuration.instance(true).load do
     end
 
     # for centos
+    desc "setup mongodb use yum"
     task :yum_install, :role => :app do
       put utilities.render("mongodb.repo", binding), "mongodb.repo.tmp"
       sudo "cp mongodb.repo.tmp /etc/yum.repos.d/MongoDB.repo"
@@ -56,8 +57,8 @@ Capistrano::Configuration.instance(true).load do
       sudo "yum install mongo-stable-server"
     end
 
+    desc "setup mongo node"
     task :setup_node, :role => :app do
-
       # create config file
       put utilities.render("mongod.conf", binding), "mongod.conf.tmp"
       put utilities.render("mongodb.init", binding), "mongodb.init.tmp"
@@ -70,7 +71,6 @@ Capistrano::Configuration.instance(true).load do
 
       sudo "mkdir -p #{mongodb_data_path}"
       sudo "chown mongod:mongod #{mongodb_data_path}"
-
     end
   end
 end
