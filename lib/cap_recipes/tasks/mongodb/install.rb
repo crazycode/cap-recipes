@@ -75,12 +75,31 @@ Capistrano::Configuration.instance(true).load do
       sudo "cp mongod.conf.tmp #{mongod_conf}"
       sudo "cp mongodb.init.tmp #{mongodb_init}"
       sudo "chmod a+x #{mongodb_init}"
-      #sudo "/sbin/chkconfig --add #{mongodb_name}"
+      sudo "/sbin/chkconfig --add #{mongodb_name}"
       run "rm mongod.conf.tmp"
       run "rm mongodb.init.tmp"
 
       sudo "mkdir -p #{mongodb_data_path}"
       sudo "chown mongod:mongod #{mongodb_data_path}"
+    end
+
+    desc "node start"
+    task :node_start, :role => :app do
+      sudo "#{mongodb_init} start"
+    end
+
+    desc "node stop"
+    task :node_stop, :role => :app do
+      sudo "#{mongodb_init} stop"
+    end
+
+    desc "uninstall mongo node"
+    task :uninstall_node, :role => :app do
+      mongodb.node_stop
+      sudo "rm #{mongod_conf}"
+      sudo "rm #{mongodb_init}"
+      sudo "/sbin/chkconfig #{mongodb_name} off"
+      sudo "/sbin/chkconfig --del #{mongodb_name}"
     end
   end
 end

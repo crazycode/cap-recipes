@@ -1,11 +1,11 @@
 # mongo.conf
+<% unless mongodb_is_configsvr %>
 replSet=<%= mongodb_nodename %>
-rest=true
-
+<% end %>
+rest=false
 <% if mongodb_is_configsvr %>
 configsvr=true
 <% end %>
-
 #where to log
 logpath=/var/log/mongo/<%= mongodb_name %>.log
 
