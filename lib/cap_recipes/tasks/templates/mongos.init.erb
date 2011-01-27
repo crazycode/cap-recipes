@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# <%= mongos_name %> - Startup script for mongos
+
+# chkconfig: 35 85 15
+# description: <%= Mongos_name %>.
+# processname: mongos
+# pidfile: /tmp/<%= mongos_name %>.pid
+
+. /etc/rc.d/init.d/functions
+
+# things from mongos.conf get there by mongod reading it
+
+OPTIONS=" --configdb <%= mongos_config_db %> --logpath <%= mongos_log_path %> --pidfilepath /tmp/<%= mongos_name %>.pid"
+
+mongos=${MONGOS-/usr/bin/mongos}
+
+MONGO_USER=mongod
+MONGO_GROUP=mongod
+
+start()
+{
+  echo -n $"Starting <%= mongos_name %>: "
+  daemon --user "$MONGO_USER" $mongos $OPTIONS
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/<%= mongos_name %>
+}
+
+stop()
+{
+  echo -n $"Stopping <%= mongos_name %>: "
+  killproc -p /tmp/<%= mongos_name %>.pid -t30 -TERM /usr/bin/mongos
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/<%= mongos_name %>
+}
+
+restart () {
+        stop
+        start
+}
+
+ulimit -n 12000
+RETVAL=0
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload|force-reload)
+    restart
+    ;;
+  condrestart)
+    [ -f /var/lock/subsys/<%= mongos_name %> ] && restart || :
+    ;;
+  status)
+    status $mongos
+    RETVAL=$?
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    RETVAL=1
+esac
+
+exit $RETVAL

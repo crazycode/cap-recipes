@@ -25,6 +25,11 @@ Capistrano::Configuration.instance(true).load do
   set :mongodb_port, 27017
   set :mongodb_is_configsvr, false
 
+  set :mongos_name, "mongos"
+  set :mongos_init, "/etc/init.d/mongos"
+  set :mongos_log_path, "/var/log/mongos"
+  set :mongos_config_db, "127.0.0.1:27019"
+
   namespace :mongodb do
     desc "Installs mongodb binaries and all dependencies"
     task :install, :role => :app do
@@ -67,8 +72,8 @@ Capistrano::Configuration.instance(true).load do
       sudo "yum install mongo-stable-server"
     end
 
-    desc "setup mongo node"
-    task :setup_node, :role => :app do
+    desc "install mongo node"
+    task :install_node, :role => :app do
       # create config file
       put utilities.render("mongod.conf", binding), "mongod.conf.tmp"
       put utilities.render("mongodb.init", binding), "mongodb.init.tmp"
@@ -80,6 +85,18 @@ Capistrano::Configuration.instance(true).load do
       run "rm mongodb.init.tmp"
 
       sudo "mkdir -p #{mongodb_data_path}"
+      sudo "chown mongod:mongod #{mongodb_data_path}"
+    end
+
+    desc "install mongos"
+    task :install_mongos, :role => :app do
+      put utilities.render("mongos.init", binding), "mongos.init.tmp"
+      sudo "cp mongos.init.tmp #{mongos_init}"
+      sudo "chmod a+x #{mongos_init}"
+      sudo "/sbin/chkconfig --add #{mongos_name}"
+      run "rm mongos.init.tmp"
+
+      sudo "mkdir -p #{mongos_log_path}"
       sudo "chown mongod:mongod #{mongodb_data_path}"
     end
 
