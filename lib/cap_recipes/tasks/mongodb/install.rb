@@ -118,5 +118,14 @@ Capistrano::Configuration.instance(true).load do
       sudo "/sbin/chkconfig #{mongodb_name} off"
       sudo "/sbin/chkconfig --del #{mongodb_name}"
     end
+
+    desc "uninstall mongos"
+    task :uninstall_mongos, :role => :app do
+      mongodb.node_stop
+      sudo "rm #{mongos_init}"
+      sudo "/sbin/chkconfig #{mongos_name} off"
+      sudo "/sbin/chkconfig --del #{mongos_name}"
+    end
+
   end
 end
