@@ -30,11 +30,11 @@ Capistrano::Configuration.instance(true).load do
       #sudo "tar -zvxf #{dir}/#{basename} -C #{dir}"
       #sudo "chown #{user}:root #{tomcat_home} -R"
 
-      put utilities.render("tomcat", binding), "tomcat.tmp"
-      sudo "cp tomcat.tmp #{tomcat_ctrl}"
+      put utilities.render("tomcat", binding), "/tmp/tomcat.tmp"
+      sudo "cp /tmp/tomcat.tmp #{tomcat_ctrl}"
       sudo "chmod a+x #{tomcat_ctrl}"
       sudo "/sbin/chkconfig --add #{basectl}"
-      run "rm tomcat.tmp"
+      run "rm /tmp/tomcat.tmp"
       sudo "rm #{dir}/#{basename}"
     end
 
