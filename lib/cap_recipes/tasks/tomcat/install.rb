@@ -5,14 +5,19 @@ Capistrano::Configuration.instance(true).load do
   # TOMCAT SERVERS
   _cset :tomcat_home, "/usr/local/apache-tomcat-6.0.29"
   _cset :tomcat_ctrl, "/etc/init.d/tomcat"
+  _cset :java_home, "/usr/lib/jvm/java"
 
   #
   # simple interactions with the tomcat server
   #
   namespace :tomcat do
 
+    set :tomcat_user, do
+      user   # default use current user.
+    end
+
     desc "install tomcat"
-    task :install do
+    task :install, :role => :app do
       dir = File.dirname(tomcat_home)
       basename = File.basename(tomcat_file)
       basectl = File.basename(tomcat_ctrl)
