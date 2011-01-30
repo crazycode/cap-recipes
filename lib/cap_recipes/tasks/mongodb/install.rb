@@ -110,6 +110,12 @@ Capistrano::Configuration.instance(true).load do
       sudo "#{mongodb_init} stop"
     end
 
+    desc "node status"
+    task :node_status, :role => :app do
+      sudo "ps auxH | grep mongo | wc -l"
+      sudo "#{mongodb_init} status"
+    end
+
     desc "uninstall mongo node"
     task :uninstall_node, :role => :app do
       mongodb.node_stop
