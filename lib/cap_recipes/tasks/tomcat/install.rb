@@ -25,10 +25,10 @@ Capistrano::Configuration.instance(true).load do
       basename = File.basename(tomcat_file)
       basectl = File.basename(tomcat_ctrl)
       puts "#{tomcat_file} ,,,, #{dir}  /#{basename}"
-      #utilities.sudo_upload "#{tomcat_file}", "#{dir}/#{basename}"
-      #sudo "mkdir -p #{dir}"
-      #sudo "tar -zvxf #{dir}/#{basename} -C #{dir}"
-      #sudo "chown #{user}:root #{tomcat_home} -R"
+      utilities.sudo_upload "#{tomcat_file}", "#{dir}/#{basename}"
+      sudo "mkdir -p #{dir}"
+      sudo "tar -zvxf #{dir}/#{basename} -C #{dir}"
+      sudo "chown #{user}:root #{tomcat_home} -R"
 
       put utilities.render("tomcat", binding), "/tmp/tomcat.tmp"
       sudo "cp /tmp/tomcat.tmp #{tomcat_ctrl}"
