@@ -19,7 +19,7 @@ begin
     s.name = "crazycode-cap-recipes"
     s.summary = %Q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
     s.email = "crazycode@gmail.com"
-    s.homepage = "http://github.com/nesquena/cap-recipes"
+    s.homepage = "http://github.com/crazycode/cap-recipes"
     s.description = "Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
     s.authors = ["crazycode"]
     s.rubyforge_project = 'crazycode-cap-recipes'
