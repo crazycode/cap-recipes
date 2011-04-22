@@ -16,13 +16,13 @@ require 'rake/rdoctask'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
-    s.name = "cap-recipes"
+    s.name = "crazycode-cap-recipes"
     s.summary = %Q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
-    s.email = "nesquena@gmail.com"
-    s.homepage = "http://github.com/nesquena/cap-recipes"
-    s.description = "Battle-tested capistrano recipes for debian, passenger, apache, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
-    s.authors = ["Nathan Esquenazi"]
-    s.rubyforge_project = 'cap-recipes'
+    s.email = "crazycode@gmail.com"
+    s.homepage = "http://github.com/crazycode/cap-recipes"
+    s.description = "Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
+    s.authors = ["crazycode"]
+    s.rubyforge_project = 'crazycode-cap-recipes'
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -31,7 +31,7 @@ end
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'cap-recipes'
+  rdoc.title    = 'crazycode-cap-recipes'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
