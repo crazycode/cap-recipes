@@ -41,15 +41,19 @@ Capistrano::Configuration.instance(true).load do |configuration|
       gitdeploy.setup_local
     end
 
+    desc "setup remote gitdeploy dir"
     task :setup_remote do
       run clone_repository_command()
     end
 
+    desc "setup locate gitdeploy dir"
     task :setup_local do
       system clone_repository_local_command()
     end
 
+    desc "tag build version. use -s tag=xxx to set tag's name"
     task :tag do
+      gitdeploy.setup_local
       tag_name = configuration[:tag]
       if tag_name.nil?
         rails "NO tag. pls use -s tag=xxx set tag_name"
@@ -82,6 +86,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
       end
     end
 
+    desc "deploy tagged version. use -s tag=xxx to set tag's name"
     task :deploy do
       tag_name = configuration[:tag]
       if tag_name.nil?
