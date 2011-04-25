@@ -54,6 +54,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
     desc "tag build version. use -s tag=xxx to set tag's name"
     task :tag do
       gitdeploy.setup_local
+
       tag_name = configuration[:tag]
       if tag_name.nil?
         rails "NO tag. pls use -s tag=xxx set tag_name"
@@ -74,13 +75,12 @@ Capistrano::Configuration.instance(true).load do |configuration|
       system "cd #{local_gitrepo}; git add .; git commit -m 'tag with #{tag_name}'; git tag #{tag_name};"
 
       # push tags and latest code
-      system "cd #{local_gitrepo}"
-      system "git push origin #{branch}"
+      system "cd #{local_gitrepo}; git push origin #{branch}"
       if $? != 0
         raise "git push failed"
       end
 
-      system "git push origin #{branch} --tags"
+      system "cd #{local_gitrepo}; git push origin #{branch} --tags"
       if $? != 0
         raise "git push --tags failed"
       end
@@ -110,8 +110,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     def self.update_repository_local_command(name, war)
       [
+       "cd #{local_gitrepo}",
        "if [ -e #{local_gitrepo}/#{name} ]",
-       "then rm -Rf #{local_gitrepo}/#{name}",
+       "then git rm -rf #{local_gitrepo}/#{name}",
        "fi",
        "mkdir -p #{local_gitrepo}/#{name}",
        "cd #{local_gitrepo}/#{name}",
