@@ -46,6 +46,8 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/delayed_job/manage.rb",
     "lib/cap_recipes/tasks/ec2/install.rb",
     "lib/cap_recipes/tasks/ec2/manage.rb",
+    "lib/cap_recipes/tasks/gitdeploy.rb",
+    "lib/cap_recipes/tasks/gitdeploy/setup.rb",
     "lib/cap_recipes/tasks/gitosis.rb",
     "lib/cap_recipes/tasks/gitosis/install.rb",
     "lib/cap_recipes/tasks/gitosis/manage.rb",
