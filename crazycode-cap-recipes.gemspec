@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{crazycode-cap-recipes}
-  s.version = "0.3.37"
+  s.version = "0.3.38"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = %q{2011-04-22}
+  s.date = %q{2011-04-25}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{crazycode@gmail.com}
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "VERSION.yml",
     "bin/cap-recipes",
     "cap-recipes.gemspec",
+    "crazycode-cap-recipes.gemspec",
     "examples/advanced/deploy.rb",
     "examples/advanced/deploy/experimental.rb",
     "examples/advanced/deploy/production.rb",
@@ -45,6 +46,8 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/delayed_job/manage.rb",
     "lib/cap_recipes/tasks/ec2/install.rb",
     "lib/cap_recipes/tasks/ec2/manage.rb",
+    "lib/cap_recipes/tasks/gitdeploy.rb",
+    "lib/cap_recipes/tasks/gitdeploy/setup.rb",
     "lib/cap_recipes/tasks/gitosis.rb",
     "lib/cap_recipes/tasks/gitosis/install.rb",
     "lib/cap_recipes/tasks/gitosis/manage.rb",
