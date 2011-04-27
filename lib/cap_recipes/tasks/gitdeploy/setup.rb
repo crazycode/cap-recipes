@@ -30,7 +30,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
     "/tmp/localgit_#{application}"
   end
   set :local_gitrepo do
-    "#{local_git_dir}/local_gitrepo"
+    "#{local_git_dir}/#{application}"
   end
 
   namespace :gitdeploy do
@@ -133,11 +133,11 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     def self.update_repository_remote_command(tag_name)
       [
+       # git reset --hard;git fetch;git reset --merge #{tag_name}
        "cd #{deploy_to_gitrepo}",
+       "git reset --hard",
        "git fetch",
-       "git checkout #{branch}",
-       "git merge origin/#{branch}",
-       "git checkout -b tag_#{tag_name} #{tag_name}",
+       "git reset --merge #{tag_name}",
       ].join("; ")
     end
 
