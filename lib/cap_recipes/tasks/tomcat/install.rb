@@ -10,7 +10,7 @@ Capistrano::Configuration.instance(true).load do
   _cset :tomcat_ctrl, "/etc/init.d/tomcat"
   _cset :java_home, "/usr/lib/jvm/java"
 
-  set :tomcat_user, do
+  set :tomcat_user do
     user   # default use current user.
   end
 
