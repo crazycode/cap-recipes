@@ -4,6 +4,7 @@ require "uri"
 require "json"
 
 require 'cap_recipes/tasks/gitdeploy'
+require 'cap_recipes/tasks/tomcat'
 require File.expand_path(File.dirname(__FILE__) + '/http')
 
 
@@ -24,7 +25,7 @@ class CmdbService
     end
 
     unless result['success']
-      raise "#{unit_code}@#{stage} get_app_role faile!"
+      raise "#{unit_code}@#{stage} get_app_role faile! return data: #{data}"
     end
 
     server = result['servers']
@@ -36,10 +37,10 @@ class CmdbService
   end
 
 
-  def self.start_deploy(cse_base, unit_code, stage)
+  def self.start_deploy(cse_base, unit_code, stage, version)
     url = URI.parse("#{cse_base}/deploy/start-deploy.do")
-
-    param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => '1.0.1' }
+    puts "version=#{version}"
+    param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => version }
 
     http = Net::HTTP.new(url.host, url.port)
 
@@ -53,7 +54,7 @@ class CmdbService
     end
 
     unless result['success']
-      raise "#{unit_code}@#{stage} start_deploy faile!"
+      raise "#{unit_code}@#{stage} start_deploy faile! return data: #{data}"
     end
 
     result['deploymentId']
@@ -83,11 +84,30 @@ class CmdbService
     end
 
     unless result['success']
-      puts "#{unit_code}@#{stage} start_deploy faile!"
+      puts "#{unit_code}@#{deployment_id} complete_deploy faile! return data: #{data}"
       return false
     end
 
     return true
+  end
+
+
+  def self.get_deploy_id(file)
+    unless File.exists? file
+      puts "file #{file} NOT exists!"
+      return nil
+    end
+
+    deploy_id = nil
+    open(file, 'r') do |f|
+      deploy_id = f.readline
+      #if f.lines.count == 0
+       # puts "empty deploy_id, please delete file: #{file}."
+      #else
+       # deploy_id = f.readline
+      #end
+    end
+    deploy_id
   end
 
 end
@@ -100,6 +120,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
   set :deploy_stage, "development"
 
   set :deploy_id_file, ".deploy_id"
+  set :tag, ""
 
   role :app do
     CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
@@ -107,49 +128,39 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
   namespace :cmdb do
 
-    def get_deploy_id
-      unless File.exists? deploy_id_file
-        return nil
-      end
-
-      deploy_id = nil
-      open(deploy_id_file, 'r') do |f|
-        if f.lines.count == 0
-          puts "empty deploy_id, please delete file: #{deploy_id_file}."
-        else
-          deploy_id = f.readline
-        end
-      end
-      deploy_id
-    end
-
     task :start do
       if File.exists? deploy_id_file
         puts "Previous Deploy NOT Complete, please run 'cap cmdb:failback' first."
         exit(1)
       end
 
-      deploy_id = CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage)
+      deploy_id = CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage, tag)
 
       open(deploy_id_file, 'w') do |f|
         f.write deploy_id
       end
     end
 
-
+    desc "set current deploy FAILBACK!"
     task :failback do
-      deploy_id = get_deploy_id
-      complete_deploy(cse_base, deploy_unit_code, deploy_id, false, "capistrano部署失败，撤销发布")
+      deploy_id = CmdbService.get_deploy_id(deploy_id_file)
+      unless deploy_id.nil?
+        CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_id, false, "capistrano部署失败，撤销发布")
+      end
     end
 
+    desc "set current deploy success DONE!"
     task :done do
-      deploy_id = get_deploy_id
-      complete_deploy(cse_base, deploy_unit_code, deploy_id, true, "通过capistrano部署成功")
+      deploy_id = CmdbService.get_deploy_id(deploy_id_file)
+      puts "deploy_id=#{deploy_id}, file=#{deploy_id_file}"
+      CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_id, true, "通过capistrano部署成功")
+      File.delete deploy_id_file
     end
 
     desc "deploy to tomcat"
-    desc :deploy_to_tomcat do
-      deploy_id = get_deploy_id() || CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage)
+    task :deploy_to_tomcat do
+      cmdb.start
+      deploy_id = CmdbService.get_deploy_id(deploy_id_file) || CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage, tag)
       puts "deploy_id=#{deploy_id}"
 
       gitdeploy.deploy
