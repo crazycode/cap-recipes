@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{crazycode-cap-recipes}
-  s.version = "0.3.39.3"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = %q{2011-04-29}
+  s.date = %q{2011-08-22}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{crazycode@gmail.com}
@@ -19,12 +19,14 @@ Gem::Specification.new do |s|
     "README.textile"
   ]
   s.files = [
+    "Capfile",
     "LICENSE",
     "README.textile",
     "Rakefile",
     "VERSION.yml",
     "bin/cap-recipes",
     "cap-recipes.gemspec",
+    "config/deploy.rb",
     "crazycode-cap-recipes.gemspec",
     "examples/advanced/deploy.rb",
     "examples/advanced/deploy/experimental.rb",
@@ -41,6 +43,8 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/backgroundrb/manage.rb",
     "lib/cap_recipes/tasks/bundler.rb",
     "lib/cap_recipes/tasks/bundler/manage.rb",
+    "lib/cap_recipes/tasks/cmdb.rb",
+    "lib/cap_recipes/tasks/cmdbutils.rb",
     "lib/cap_recipes/tasks/delayed_job.rb",
     "lib/cap_recipes/tasks/delayed_job/hooks.rb",
     "lib/cap_recipes/tasks/delayed_job/manage.rb",
@@ -51,6 +55,7 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/gitosis.rb",
     "lib/cap_recipes/tasks/gitosis/install.rb",
     "lib/cap_recipes/tasks/gitosis/manage.rb",
+    "lib/cap_recipes/tasks/http.rb",
     "lib/cap_recipes/tasks/hudson.rb",
     "lib/cap_recipes/tasks/hudson/manage.rb",
     "lib/cap_recipes/tasks/jetty.rb",
@@ -79,6 +84,7 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/rubygems.rb",
     "lib/cap_recipes/tasks/rubygems/install.rb",
     "lib/cap_recipes/tasks/rubygems/manage.rb",
+    "lib/cap_recipes/tasks/sdpjenkins.rb",
     "lib/cap_recipes/tasks/templates/hudson.erb",
     "lib/cap_recipes/tasks/templates/mongod.conf.erb",
     "lib/cap_recipes/tasks/templates/mongodb.init.erb",
@@ -106,7 +112,8 @@ Gem::Specification.new do |s|
     "spec/cap/helper.rb",
     "spec/cap_recipes_spec.rb",
     "spec/spec_helper.rb",
-    "specs.watchr"
+    "specs.watchr",
+    "test.rb"
   ]
   s.homepage = %q{http://github.com/crazycode/cap-recipes}
   s.require_paths = ["lib"]
