@@ -15,51 +15,16 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :upload_dir, ""
   _cset :shell_commands, "cd #{upload_dir}; ls -all"
 
+  # role :app, :primary => true do
+  #   CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
+  # end
+
+  role :single, "1.1.1.1"
+
   namespace :sdpjenkins do
 
-    task :start do
-      if File.exists? deploy_id_file
-        puts "Previous Deploy NOT Complete, please run 'cap cmdb:failback' first."
-        exit(1)
-      end
-
-      deploy_id = CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage, tag)
-
-      open(deploy_id_file, 'w') do |f|
-        f.write deploy_id
-      end
-    end
-
-    desc "set current deploy FAILBACK!"
-    task :failback do
-      deploy_id = CmdbService.get_deploy_id(deploy_id_file)
-      unless deploy_id.nil?
-        CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_id, false, "capistrano部署失败，撤销发布")
-      end
-    end
-
-    desc "set current deploy success DONE!"
-    task :done do
-      deploy_id = CmdbService.get_deploy_id(deploy_id_file)
-      puts "deploy_id=#{deploy_id}, file=#{deploy_id_file}"
-      CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_id, true, "通过capistrano部署成功")
-      File.delete deploy_id_file
-    end
-
-    desc "deploy to tomcat"
-    task :deploy_to_tomcat do
-      cmdb.start
-      deploy_id = CmdbService.get_deploy_id(deploy_id_file) || CmdbService.start_deploy("#{cse_base}", deploy_unit_code, deploy_stage, tag)
-      puts "deploy_id=#{deploy_id}"
-
-      gitdeploy.deploy
-      tomcat.restart
-
-      cmdb.done
-    end
-
     desc "copy all war to specify dir"
-    task :copy_to_dir do
+    task :copy_to_dir, :roles => :app do
       if build_workspace.empty?
         puts "Please specify the build_workspace dir, set :build_workspace, '/home/foo/project/code'"
         exit(1)
@@ -91,7 +56,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
     end
 
     desc "upload released file to remote hosts"
-    task :upload_file do
+    task :upload_file, :roles => :app do
       if upload_dir.empty?
         puts "Please specify the remote upload_dir, set :upload_dir, '/opt/applications/project/upload'"
         exit(1)
@@ -103,17 +68,27 @@ Capistrano::Configuration.instance(true).load do |configuration|
     end
 
     desc "execute commands from remote hosts"
-    task :execute_commands do
+    task :execute_commands, :roles => :app do
       unless shell_commands.empty?
         run shell_commands
       end
     end
 
     desc "copy file, upload it, then execute commands"
-    task :doall do
-      copy_to_dir
-      upload_file
-      execute_commands
+    task :doall, :roles => :single do
+      codes = deploy_unit_code.split(/[,;\s]+/)
+      deploy_hash = Hash.new
+      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, tag) }
+
+      begin
+        copy_to_dir
+        upload_file
+        execute_commands
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
+      rescue Exception => e
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, false, "capistrano部署失败，撤销发布，原因：#{e.message}") }
+      end
+
     end
 
   end
