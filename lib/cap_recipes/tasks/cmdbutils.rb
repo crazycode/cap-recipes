@@ -30,7 +30,9 @@ class CmdbService
       raise "Not fout servers for #{unit_code}@#{stage}"
     end
 
-    server.collect {|s| "#{s['ip']}:#{s['sshPort']}"}
+    servers = server.collect {|s| "#{s['ip']}:#{s['sshPort']}"}
+    puts "Roles: #{servers.join(', ')}"
+    servers
   end
 
 

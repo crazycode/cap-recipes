@@ -11,11 +11,11 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
   set :use_sudo, true
 
-  set :cse_base, "http://10.241.14.166:8080/cse"
-  set :deploy_unit_code, ""
-  set :deploy_stage, "development"
+  _cset :cse_base, "http://cmdb.shengpayops.com/cse"
+  _cset :deploy_unit_code, ""
+  _cset :deploy_stage, "development"
 
-  set :build_version, ""
+  _cset :build_version, ""
 
   role :app, :primary => true do
     CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)

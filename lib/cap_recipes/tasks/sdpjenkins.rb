@@ -8,6 +8,12 @@ include FileUtils
 
 Capistrano::Configuration.instance(true).load do |configuration|
 
+  set :use_sudo, true
+
+  _cset :cse_base, "http://cmdb.shengpayops.com/cse"
+  _cset :deploy_unit_code, ""
+  _cset :deploy_stage, "development"
+
   # 为测试环境发布使用
   _cset :build_workspace, ""
   _cset :release_dir, ""
