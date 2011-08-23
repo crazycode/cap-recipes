@@ -14,6 +14,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :release_pattern, "*.war"
   _cset :upload_dir, ""
   _cset :shell_commands, "cd #{upload_dir}; ls -all"
+  _cset :build_version, "unset version"
 
   # role :app, :primary => true do
   #   CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
@@ -52,6 +53,8 @@ Capistrano::Configuration.instance(true).load do |configuration|
         target_name = File.basename(file).gsub(/-((\d+)\.?)+(-SNAPSHOT)?/, "")
         cp file, "#{release_dir}/#{target_name}"
       end
+
+      system "echo \"#{build_version}\" > #{release_dir}/version.txt"
 
     end
 

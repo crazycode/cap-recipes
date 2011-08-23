@@ -15,8 +15,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
   set :deploy_unit_code, ""
   set :deploy_stage, "development"
 
-  set :deploy_id_file, ".deploy_id"
-  set :tag, ""
+  set :build_version, ""
 
   role :app, :primary => true do
     CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
@@ -29,7 +28,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
     task :deploy_to_tomcat, :roles => :single do
       codes = deploy_unit_code.split(/[,;\s]+/)
       deploy_hash = Hash.new
-      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, tag) }
+      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, build_version) }
       begin
         gitdeploy.deploy
         tomcat.restart
