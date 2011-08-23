@@ -25,7 +25,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
   namespace :sdpjenkins do
 
     desc "copy all war to specify dir"
-    task :copy_to_dir, :roles => :app do
+    task :copy_release_file, :roles => :app do
       if build_workspace.empty?
         puts "Please specify the build_workspace dir, set :build_workspace, '/home/foo/project/code'"
         exit(1)
@@ -77,14 +77,13 @@ Capistrano::Configuration.instance(true).load do |configuration|
       end
     end
 
-    desc "copy file, upload it, then execute commands"
-    task :doall, :roles => :single do
+    desc "upload release file, then execute commands"
+    task :deploy, :roles => :single do
       codes = deploy_unit_code.split(/[,;\s]+/)
       deploy_hash = Hash.new
       codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, tag) }
 
       begin
-        copy_to_dir
         upload_file
         execute_commands
         deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
