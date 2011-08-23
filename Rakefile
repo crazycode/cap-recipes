@@ -1,12 +1,12 @@
 =begin
 Using Jeweler for Gem Packaging...
 
-  * Update the version and release version to github: 
+  * Update the version and release version to github:
     $ rake version:bump:patch && rake release && rake gemcutter:release
-    
+
   * Build and install the latest version locally:
     $ rake install
-    
+
 =end
 
 require 'rake'
@@ -23,6 +23,10 @@ begin
     s.description = "Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
     s.authors = ["crazycode"]
     s.rubyforge_project = 'crazycode-cap-recipes'
+
+    s.add_dependency "capistrano"
+    s.add_dependency "json"
+    s.add_dependency "addressable"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
