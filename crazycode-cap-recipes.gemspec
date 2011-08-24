@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{crazycode-cap-recipes}
-  s.version = "0.4.5"
+  s.version = "0.4.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = %q{2011-08-23}
+  s.date = %q{2011-08-24}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{crazycode@gmail.com}
@@ -120,6 +120,15 @@ Gem::Specification.new do |s|
   s.rubyforge_project = %q{crazycode-cap-recipes}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
+  s.test_files = [
+    "examples/advanced/deploy.rb",
+    "examples/advanced/deploy/experimental.rb",
+    "examples/advanced/deploy/production.rb",
+    "examples/simple/deploy.rb",
+    "spec/cap/helper.rb",
+    "spec/cap_recipes_spec.rb",
+    "spec/spec_helper.rb"
+  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
