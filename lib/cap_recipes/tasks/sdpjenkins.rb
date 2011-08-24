@@ -20,7 +20,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :release_pattern, "*.war"
   _cset :upload_dir, ""
   _cset :shell_commands, "cd #{upload_dir}; ls -all"
-  _cset :build_version, "unset version"
+  _cset :build_version, ""
 
   role :app, :primary => true do
     CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
