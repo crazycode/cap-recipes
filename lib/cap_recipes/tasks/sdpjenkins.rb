@@ -22,9 +22,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :shell_commands, "cd #{upload_dir}; ls -all"
   _cset :build_version, "unset version"
 
-  # role :app, :primary => true do
-  #   CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
-  # end
+  role :app, :primary => true do
+    CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
+  end
 
   role :single, "1.1.1.1"
 
@@ -60,7 +60,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
         cp file, "#{release_dir}/#{target_name}"
       end
 
-      system "echo \"#{build_version}\" > #{release_dir}/version.txt"
+      system "echo \"#{build_version}\" >> #{release_dir}/version.txt"
 
     end
 
@@ -85,18 +85,16 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     desc "upload release file, then execute commands"
     task :deploy, :roles => :single do
-      codes = deploy_unit_code.split(/[,;\s]+/)
-      deploy_hash = Hash.new
-      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, tag) }
+      version = build_version
+      if version.empty? && File.exists?("#{release_dir}/version.txt")
+        version = File.open("#{release_dir}/version.txt") { |f| f.extend(Enumerable).inject { |_,ln| ln } }
+      end
+      puts "version=#{version}"
 
-      begin
+      CmdbService.do_deploy(cse_base, deploy_unit_code, deploy_stage, version.strip) do
         upload_file
         execute_commands
-        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
-      rescue Exception => e
-        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, false, "capistrano部署失败，撤销发布，原因：#{e.message}") }
       end
-
     end
 
   end

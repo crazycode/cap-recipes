@@ -26,17 +26,10 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     desc "deploy to tomcat"
     task :deploy_to_tomcat, :roles => :single do
-      codes = deploy_unit_code.split(/[,;\s]+/)
-      deploy_hash = Hash.new
-      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, deploy_stage, build_version) }
-      begin
+      CmdbService.do_deploy(cse_base, deploy_unit_code, deploy_stage, version.strip) do
         gitdeploy.deploy
         tomcat.restart
-        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
-      rescue Exception => e
-        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, false, "capistrano部署失败，撤销发布，原因：#{e.message}") }
       end
     end
-
   end
 end

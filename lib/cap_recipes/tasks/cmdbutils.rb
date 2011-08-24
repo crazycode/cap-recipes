@@ -109,4 +109,16 @@ class CmdbService
     deploy_id
   end
 
+  def self.do_deploy(cse_base, unit_code, stage, version)
+      codes = unit_code.split(/[,;\s]+/)
+      deploy_hash = Hash.new
+      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, stage, version) }
+
+      begin
+        yield
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
+      rescue Exception => e
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, false, "capistrano部署失败，撤销发布，原因：#{e.message}") }
+      end
+  end
 end
