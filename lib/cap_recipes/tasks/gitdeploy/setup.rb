@@ -66,10 +66,15 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
       system "cd #{local_gitrepo}; git checkout #{branch}; git fetch; git merge origin/#{branch};"
 
-      war_config.each do |config|
-        puts "name=#{config[:name]}, war=#{config[:war]}"
-        puts update_repository_local_command(config[:name], config[:war])
-        system update_repository_local_command(config[:name], config[:war])
+
+      if defined? war_name
+        puts "name=#{war_name}, war=#{war_path}"
+        system update_repository_local_command(war_name, war_path)
+      else
+        war_config.each do |config|
+          puts "name=#{config[:name]}, war=#{config[:war]}"
+          system update_repository_local_command(config[:name], config[:war])
+        end
       end
 
       system "cd #{local_gitrepo}; git add .; git commit -m 'tag with #{tag_name}'; git tag #{tag_name};"
