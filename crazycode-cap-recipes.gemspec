@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{crazycode-cap-recipes}
-  s.version = "0.4.6"
+  s.version = "0.4.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = %q{2011-08-24}
+  s.date = %q{2011-08-26}
   s.default_executable = %q{cap-recipes}
   s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
   s.email = %q{crazycode@gmail.com}
@@ -84,7 +84,12 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/rubygems.rb",
     "lib/cap_recipes/tasks/rubygems/install.rb",
     "lib/cap_recipes/tasks/rubygems/manage.rb",
+    "lib/cap_recipes/tasks/sdpdeploy/autoinstall.rb",
+    "lib/cap_recipes/tasks/sdpdeploy/iis.rb",
+    "lib/cap_recipes/tasks/sdpdeploy/sft.rb",
+    "lib/cap_recipes/tasks/sdpdeploy/sfttask.rb",
     "lib/cap_recipes/tasks/sdpjenkins.rb",
+    "lib/cap_recipes/tasks/sft.rb",
     "lib/cap_recipes/tasks/templates/hudson.erb",
     "lib/cap_recipes/tasks/templates/mongod.conf.erb",
     "lib/cap_recipes/tasks/templates/mongodb.init.erb",
