@@ -60,9 +60,6 @@ Capistrano::Configuration.instance(true).load do |configuration|
         raise "NO tag. pls use -s tag=xxx set tag_name"
       end
 
-      if war_config.nil? or war_config.size == 0 or !defined? war_name
-        raise 'NO war_config'
-      end
 
       system "cd #{local_gitrepo}; git checkout #{branch}; git fetch; git merge origin/#{branch};"
 
@@ -71,6 +68,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
         puts "name=#{war_name}, war=#{war_path}"
         system update_repository_local_command(war_name, war_path)
       else
+        if war_config.nil? or war_config.size == 0
+          raise 'NO war_config'
+        end
         war_config.each do |config|
           puts "name=#{config[:name]}, war=#{config[:war]}"
           system update_repository_local_command(config[:name], config[:war])
