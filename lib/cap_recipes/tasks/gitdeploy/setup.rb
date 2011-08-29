@@ -55,7 +55,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
     task :tag do
       gitdeploy.setup_local
 
-      tag_name = configuration[:tag] || build_version
+      tag_name = configuration[:tag] || configuration[:build_version]
       if tag_name.nil?
         raise "NO tag. pls use -s tag=xxx set tag_name"
       end
@@ -93,7 +93,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     desc "deploy tagged version. use -s tag=xxx to set tag's name"
     task :deploy do
-      tag_name = configuration[:tag] || build_version
+      tag_name = configuration[:tag] || configuration[:build_version]
       if tag_name.nil?
         raise "NO tag. pls use -s tag=xxx set tag_name"
       end
