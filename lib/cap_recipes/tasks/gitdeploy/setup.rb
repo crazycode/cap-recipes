@@ -60,7 +60,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
         raise "NO tag. pls use -s tag=xxx set tag_name"
       end
 
-      if war_config.nil? or war_config.size == 0
+      if war_config.nil? or war_config.size == 0 or !defined? war_name
         raise 'NO war_config'
       end
 
