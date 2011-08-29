@@ -24,7 +24,8 @@ Capistrano::Configuration.instance(true).load do |configuration|
   end
 
   _cset :war_config, Array.new
-
+  _cset :war_name, ""
+  _cset :war_path, "not set.war"
 
   set :local_git_dir do
     "/tmp/localgit_#{application}"
@@ -64,7 +65,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
       system "cd #{local_gitrepo}; git checkout #{branch}; git fetch; git merge origin/#{branch};"
 
 
-      if defined? war_name
+      unless war_name.empty?
         puts "name=#{war_name}, war=#{war_path}"
         system update_repository_local_command(war_name, war_path)
       else
