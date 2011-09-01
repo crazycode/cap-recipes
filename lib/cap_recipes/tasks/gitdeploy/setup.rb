@@ -56,12 +56,6 @@ Capistrano::Configuration.instance(true).load do |configuration|
     task :tag do
       gitdeploy.setup_local
 
-      tag_name = configuration[:tag] || configuration[:build_version]
-      if tag_name.nil?
-        raise "NO tag. pls use -s tag=xxx set tag_name"
-      end
-
-
       system "cd #{local_gitrepo}; git checkout #{branch}; git fetch; git merge origin/#{branch};"
 
 
@@ -78,7 +72,15 @@ Capistrano::Configuration.instance(true).load do |configuration|
         end
       end
 
-      system "cd #{local_gitrepo}; git add .; git commit -m 'tag with #{tag_name}'; git tag #{tag_name};"
+      tag_name = configuration[:tag] || configuration[:build_version]
+      if tag_name.nil?
+        build_msg = war_name.empty? ? "all" : war_name
+        system "cd #{local_gitrepo}; git add .; git commit -m 'build for #{build_msg}'"
+        # raise "NO tag. pls use -s tag=xxx set tag_name"
+      else
+        system "cd #{local_gitrepo}; git add .; git commit -m 'tag with #{tag_name}'; git tag #{tag_name};"
+      end
+
 
       # push tags and latest code
       system "cd #{local_gitrepo}; git push origin #{branch}"
@@ -115,6 +117,11 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
 
     def self.update_repository_local_command(name, war)
+      unless war.start_with?('/')
+        war_path = "#{local_base_dir}/#{war}"
+      else
+        war_path = war
+      end
       [
        "cd #{local_gitrepo}",
        "if [ -e #{local_gitrepo}/#{name} ]",
@@ -122,7 +129,7 @@ Capistrano::Configuration.instance(true).load do |configuration|
        "fi",
        "mkdir -p #{local_gitrepo}/#{name}",
        "cd #{local_gitrepo}/#{name}",
-       "jar -xf #{local_base_dir}/#{war}"
+       "jar -xf #{war_path}"
       ].join("; ")
     end
 
