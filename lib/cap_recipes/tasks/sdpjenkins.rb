@@ -22,6 +22,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :shell_commands, "cd #{upload_dir}; ls -all"
   _cset :build_version, ""
 
+  _cset :servers, ""
+  _cset :deploy_to, ""
+
   role :app, :primary => true do
     CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
   end
@@ -92,6 +95,20 @@ Capistrano::Configuration.instance(true).load do |configuration|
       puts "version=#{version}"
 
       CmdbService.do_deploy(cse_base, deploy_unit_code, deploy_stage, version.strip) do
+        upload_file
+        execute_commands
+      end
+    end
+
+    desc "register servers, upload release file, then execute commands"
+    task :deploy_with_servers, :roles => :single do
+      version = build_version
+      if version.empty? && File.exists?("#{release_dir}/version.txt")
+        version = File.open("#{release_dir}/version.txt") { |f| f.extend(Enumerable).inject { |_,ln| ln } }
+      end
+      puts "version=#{version}, servers=#{servers}, deploy_dir=#{deploy_to}"
+
+      CmdbService.do_deploy_with_server(cse_base, deploy_unit_code, deploy_stage, version.strip, servers, deploy_to) do
         upload_file
         execute_commands
       end

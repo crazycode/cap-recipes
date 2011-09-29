@@ -26,6 +26,10 @@ set :release_dir, "/tmp/cmdb_release"
 set :upload_dir, "/tmp/cmdb_upload"
 
 
+set :cse_base, "http://localhost:8081/cmdb-service-exporter"
+set :user, "root"
+
+
 # =============================================================================
 # RECIPE INCLUDES
 # =============================================================================
@@ -36,3 +40,5 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'cap_recipes/tasks/sdpjenkins'
+require 'cap_recipes/tasks/gitdeploy'
+require 'cap_recipes/tasks/sft'

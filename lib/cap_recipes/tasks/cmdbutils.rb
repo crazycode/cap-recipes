@@ -21,7 +21,7 @@ class CmdbService
       raise "web service error"
     end
 
-    unless result['success']
+    unless result['success'] == true
       raise "#{unit_code}@#{stage} get_app_role faile! return data: #{data}"
     end
 
@@ -39,7 +39,32 @@ class CmdbService
   def self.start_deploy(cse_base, unit_code, stage, version)
     url = URI.parse("#{cse_base}/deploy/start-deploy.do")
     puts "version=#{version}"
-    param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => version }
+    param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => version, 'git_revision' => '' }
+
+    http = Net::HTTP.new(url.host, url.port)
+
+    resp = http.post(url.path, param.to_json)
+    data = resp.body
+
+    result = JSON.parse(data)
+
+    if !result.has_key? 'success'
+      raise "web service error"
+    end
+
+    unless result['success']
+      raise "#{unit_code}@#{stage} start_deploy faile! return data: #{data}"
+    end
+
+    result['deploymentId']
+  end
+
+  # 启动发布过程，并注册服务器
+  def self.start_deploy_with_server(cse_base, unit_code, stage, version, servers, deploy_dir)
+    url = URI.parse("#{cse_base}/deploy/start-deploy-with-server.do")
+    puts "version=#{version}"
+    param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => version,
+      'git_revision' => '', 'servers' => servers, 'deploy_dir' => deploy_dir }
 
     http = Net::HTTP.new(url.host, url.port)
 
@@ -113,6 +138,20 @@ class CmdbService
       codes = unit_code.split(/[,;\s]+/)
       deploy_hash = Hash.new
       codes.each {|code| deploy_hash[code] = CmdbService.start_deploy(cse_base, code, stage, version) }
+
+      begin
+        yield
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, true, "通过capistrano部署成功") }
+      rescue Exception => e
+        deploy_hash.each {|code, deployid| CmdbService.complete_deploy(cse_base, code, deployid, false, "capistrano部署失败，撤销发布，原因：#{e.message}") }
+      end
+  end
+
+  # servers: 为IP加端口以逗号分隔的形式，如“10.241.12.12:22,10.241.12.13:58422”
+  def self.do_deploy_with_server(cse_base, unit_code, stage, version, servers, deploy_dir)
+      codes = unit_code.split(/[,;\s]+/)
+      deploy_hash = Hash.new
+      codes.each {|code| deploy_hash[code] = CmdbService.start_deploy_with_server(cse_base, code, stage, version, servers, deploy_dir) }
 
       begin
         yield

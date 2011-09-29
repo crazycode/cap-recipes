@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 Capistrano::Configuration.instance(true).load do |configuration|
   set :use_sudo, true
 
@@ -26,6 +27,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :war_config, Array.new
   _cset :war_name, ""
   _cset :war_path, "not set.war"
+
+  _cset :servers, ""
+  _cset :deploy_to, ""
 
   set :local_git_dir do
     "/tmp/localgit_#{application}"
@@ -102,6 +106,23 @@ Capistrano::Configuration.instance(true).load do |configuration|
       end
 
       run update_repository_remote_command(tag_name)
+    end
+
+    desc "register servers and deploy_dir on CMDB"
+    task :register_servers do
+      version = build_version
+      puts "version=#{version}, servers=#{servers}, deploy_dir=#{deploy_to}"
+      CmdbService.start_deploy_with_server(cse_base, deploy_unit_code, deploy_stage, version.strip, servers, deploy_to)
+    end
+
+    desc "send deploy success info to CMDB"
+    task :deploy_succ do
+      CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_stage, true, "部署成功")
+    end
+
+    desc "send deploy failure info to CMDB"
+    task :deploy_fail do
+      CmdbService.complete_deploy(cse_base, deploy_unit_code, deploy_stage, false, "capistrano部署失败，撤销发布。")
     end
 
 
