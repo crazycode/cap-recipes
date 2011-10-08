@@ -147,6 +147,17 @@ class CmdbService
       end
   end
 
+  # servers: 为IP加端口以逗号分隔的形式，如“10.241.12.12:22,10.241.12.13:58422”，如果没有写端口，默认为58422
+  def self.split_servers(servers)
+    servers.split(/[,\s]+/).collect do|s|
+      unless s.include?(":")
+        "#{s}:58422"
+      else
+        s
+      end
+    end
+  end
+
   # servers: 为IP加端口以逗号分隔的形式，如“10.241.12.12:22,10.241.12.13:58422”
   def self.do_deploy_with_server(cse_base, unit_code, stage, version, servers, deploy_dir)
       codes = unit_code.split(/[,;\s]+/)

@@ -26,7 +26,10 @@ Capistrano::Configuration.instance(true).load do |configuration|
   _cset :deploy_to, ""
 
   role :app, :primary => true do
-    CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
+    if servers.empty?
+      return CmdbService.get_app_role("#{cse_base}", deploy_unit_code, deploy_stage)
+    end
+    CmdbService.split_servers(servers)
   end
 
   role :single, "1.1.1.1"
