@@ -64,7 +64,7 @@ class CmdbService
     url = URI.parse("#{cse_base}/deploy/start-deploy-with-server.do")
     puts "version=#{version}"
     param = { 'deployUnitCode' => unit_code, 'stage' => stage, 'deployer' => 'capistrano', 'version' => version,
-      'git_revision' => '', 'servers' => servers, 'deploy_dir' => deploy_dir }
+      'git_revision' => '',  'deploy_user' => 'capistrano', 'task_id' => '0', 'servers' => servers, 'deploy_dir' => deploy_dir }
 
     http = Net::HTTP.new(url.host, url.port)
 
