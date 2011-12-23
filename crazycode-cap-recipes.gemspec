@@ -4,15 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{crazycode-cap-recipes}
-  s.version = "0.4.14"
+  s.name = "crazycode-cap-recipes"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = %q{2011-10-08}
-  s.default_executable = %q{cap-recipes}
-  s.description = %q{Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more}
-  s.email = %q{crazycode@gmail.com}
+  s.date = "2011-12-23"
+  s.description = "Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
+  s.email = "crazycode@gmail.com"
   s.executables = ["cap-recipes"]
   s.extra_rdoc_files = [
     "LICENSE",
@@ -120,23 +119,13 @@ Gem::Specification.new do |s|
     "specs.watchr",
     "test.rb"
   ]
-  s.homepage = %q{http://github.com/crazycode/cap-recipes}
+  s.homepage = "http://github.com/crazycode/cap-recipes"
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{crazycode-cap-recipes}
-  s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Battle-tested capistrano recipes for passenger, delayed_job, and more}
-  s.test_files = [
-    "examples/advanced/deploy.rb",
-    "examples/advanced/deploy/experimental.rb",
-    "examples/advanced/deploy/production.rb",
-    "examples/simple/deploy.rb",
-    "spec/cap/helper.rb",
-    "spec/cap_recipes_spec.rb",
-    "spec/spec_helper.rb"
-  ]
+  s.rubyforge_project = "crazycode-cap-recipes"
+  s.rubygems_version = "1.8.10"
+  s.summary = "Battle-tested capistrano recipes for passenger, delayed_job, and more"
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
