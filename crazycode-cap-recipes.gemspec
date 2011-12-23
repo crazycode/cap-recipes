@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "crazycode-cap-recipes"
-  s.version = "0.5.0"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
@@ -103,6 +103,7 @@ Gem::Specification.new do |s|
     "lib/cap_recipes/tasks/tomcat/install.rb",
     "lib/cap_recipes/tasks/tomcat/manage.rb",
     "lib/cap_recipes/tasks/tomcat/war.rb",
+    "lib/cap_recipes/tasks/uhljenkins.rb",
     "lib/cap_recipes/tasks/utilities.rb",
     "lib/cap_recipes/tasks/whenever.rb",
     "lib/cap_recipes/tasks/whenever/hooks.rb",
