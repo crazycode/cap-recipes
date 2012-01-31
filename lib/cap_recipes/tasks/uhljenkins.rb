@@ -39,18 +39,28 @@ Capistrano::Configuration.instance(true).load do |configuration|
   end
 
   role :app, :primary => true do
-    servers.split(/[,\s]+/).collect do|s|
-      unless s.include?(":")
-        "#{s}:58422"
-      else
-        s
-      end
+    servers.split(/[,\s]+/)
     end
   end
 
-  role :single, "1.1.1.1"
-
   namespace :uhljenkins do
+
+
+    desc "start service"
+    task :start_service do
+      run "sc start #{service_name}"
+    end
+
+    desc "stop service"
+    task :stop_service do
+      run "sc stop #{service_name}"
+    end
+
+    desc "stop and start service"
+    task :restart_service do
+      uhljenkins.stop_service
+      uhljenkins.start_service
+    end
 
     desc "setup remote and locate uhljenkins dir"
     task :setup do
@@ -116,8 +126,9 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
     desc "deploy. use -s tag=xxx to set tag's name, if NOT set tag, pull the repository's last version."
     task :deploy do
+      uhljenkins.setup_remote
       tag_name = configuration[:tag] || configuration[:build_version]
-      if tag_name.nil?
+      unless tag_name.nil?
         # raise "NO tag. pls use -s tag=xxx set tag_name"
         run update_repository_remote_command(tag_name)
       else
