@@ -40,7 +40,6 @@ Capistrano::Configuration.instance(true).load do |configuration|
 
   role :app, :primary => true do
     servers.split(/[,\s]+/)
-    end
   end
 
   namespace :uhljenkins do
