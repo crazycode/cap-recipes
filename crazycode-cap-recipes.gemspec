@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "crazycode-cap-recipes"
-  s.version = "0.5.1"
+  s.version = "0.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["crazycode"]
-  s.date = "2011-12-23"
+  s.date = "2012-01-31"
   s.description = "Battle-tested capistrano recipes for debian, passenger, apache, hudson, delayed_job, juggernaut, rubygems, backgroundrb, rails and more"
   s.email = "crazycode@gmail.com"
   s.executables = ["cap-recipes"]
